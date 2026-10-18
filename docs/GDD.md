@@ -1,0 +1,67 @@
+# Zima Blue Adventure — Documento de Design (v0.1, Tutorial)
+
+> Zima sai do interior rumo à Presidência. Primeiro passo: vencer a eleição da própria cidadezinha.
+
+## 1. Análise dos 5 metroidvanias de referência
+
+| Jogo | O que faz de melhor | O que levamos para o Zima |
+|---|---|---|
+| **Super Metroid** (1994) | Ensina sem texto. Mostra áreas inalcançáveis cedo para gerar curiosidade; o mundo é a tutorial. | Placas curtas e diegéticas em vez de telas de texto. Uma **sacada alta com um baú** visível desde o tutorial, impossível de alcançar sem o futuro pulo — a promessa do "volte depois". |
+| **Castlevania: Symphony of the Night** (1997) | Recompensa a curiosidade: paredes falsas, itens escondidos, sensação de impacto em cada golpe. | **Muro rachado** que quebra com ataques e esconde uma **Coxinha** (+1 de vida máxima). Inimigos piscam, recuam e soltam itens. |
+| **Hollow Knight** (2017) | Combate preciso com hitbox justa, recuo ao acertar, energia que se ganha batendo (Soul), bancos como checkpoints, chefes com sinais claros. | **Carisma**: a energia das bolhas enche quando Zima acerta golpes básicos. **Bancos da praça** salvam e curam. O chefe telegrafa cada golpe com pose + brilho antes de atacar. |
+| **Ori and the Will of the Wisps** (2020) | Movimento fluido e responsivo, ambientação viva em camadas, leitura clara mesmo com muita coisa na tela. | Cenário em **parallax de 4 camadas** (céu, morros, casario, rua), controles com buffer de entrada para nada "engolir" o botão, partículas leves. |
+| **Metroid Dread** (2021) | Contra-ataque com janela curta e recompensa grande; morte rápida → voltar a jogar em segundos. | **Rolagem com janela perfeita**: a invencibilidade só existe num trecho curto do rolamento. Acertar o tempo gera "ESQUIVA PERFEITA", câmera lenta e Carisma extra. Ao morrer, volta ao último banco quase sem espera. |
+
+### Princípios resultantes
+1. **Ensinar jogando**: cada habilidade tem um trecho da fase que só se resolve com ela.
+2. **Risco com recompensa**: rolar no tempo certo é melhor do que rolar sempre.
+3. **Bater para carregar o especial**: o jogador alterna entre agressivo (melee) e tático (bolhas).
+4. **O mundo promete mais do que entrega agora**: caminhos bloqueados que exigem habilidades futuras.
+5. **Mobile em primeiro lugar**: poucos botões, alvos grandes, legibilidade em tela pequena.
+
+## 2. Zima — moveset inicial
+
+| Ação | Teclado | Toque | Detalhe |
+|---|---|---|---|
+| Andar | ← → / A D | Direcional | Aceleração curta, freio rápido. |
+| Agachar | ↓ / S | ▼ | Reduz a altura: passa sob toldos baixos e desvia de projéteis altos. Anda agachado devagar. |
+| Rolar | K / X / Shift | Botão **Rolar** | 0,45 s, passa por baixo de obstáculos. **Invencível só entre 0,05 s e 0,22 s**. Desviar de um golpe nessa janela = Esquiva Perfeita (+Carisma, câmera lenta). |
+| Ataque básico | J / Z | Botão **Rede** | Golpe com a rede, 1 de dano, enche 1/4 de Carisma por acerto. |
+| Bolhas (especial) | L / C | Botão **Bolhas** | Custa 1 carga de Carisma (máx. 3). Dispara um jato de bolhas que atravessa o cenário, 2 de dano por bolha e aciona alavancas distantes. |
+
+Ainda **sem pulo**: ele será a primeira grande habilidade após o tutorial.
+
+## 3. O tutorial: "Vila Azul do Interior"
+
+Fluxo da esquerda para a direita, sempre descendo (sem pulo, só se cai de degraus):
+
+1. **Rodoviária** — Zima desce do ônibus. Placa: andar.
+2. **Rua do Comércio** — toldo da padaria baixo demais → agachar.
+3. **Praça dos Pombos** — pombos atacam em rasante → ataque básico.
+4. **Cabo eleitoral rival** — joga santinhos na altura da cabeça → agachar ou rolar. Placa explica a janela perfeita.
+5. **Banco da praça** — checkpoint (salva e cura).
+6. **Muro rachado** — segredo com a Coxinha (+1 vida).
+7. **Córrego** — ponte levadiça erguida; a alavanca está do outro lado → Bolhas.
+8. **Sacada da igreja** — baú alto e inalcançável ("volte quando souber pular").
+9. **Chefe: Coronel Bigodão, o Prefeito Eterno** — em frente à Prefeitura.
+
+### Chefe — Coronel Bigodão (24 de vida)
+- **Investida do Palanque**: bate o pé (poeira) e atravessa a arena → rolar através dele.
+- **Chuva de Santinhos**: arremessa 3 a 5 panfletos na altura da cabeça → agachar ou rolar.
+- **Discurso no Megafone**: onda sonora rente ao chão → só rolando no tempo certo.
+- **Fase 2 (≤ 50%)**: fica mais rápido, encadeia golpes e chama pombos.
+
+Vitória → tela "Fim do Tutorial" com tempo, mortes e esquivas perfeitas.
+
+## 4. Tecnologia
+- HTML5 Canvas + JavaScript puro, sem dependências; abre direto no navegador (inclusive por `file://`).
+- Resolução interna 640×360 escalada em pixels inteiros; paisagem no celular, com aviso para girar.
+- Entrada unificada: teclado, toque com multitoque e gamepad.
+- Áudio sintetizado com Web Audio (sem arquivos).
+- Progresso salvo em `localStorage` (banco e segredos).
+
+## 5. Próximos passos sugeridos
+1. Pulo ("Pulo do Gato") e a sacada da igreja como primeira recompensa.
+2. Mapa da cidade (estilo Hollow Knight, comprado de um personagem).
+3. Novas áreas: Fazenda, Feira, Câmara dos Vereadores.
+4. Sprites próprios dos inimigos e do chefe, no mesmo estilo do Zima.
