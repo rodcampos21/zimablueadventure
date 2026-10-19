@@ -143,7 +143,39 @@
     for (const [n, a] of Object.entries(players)) if (n !== except && !a.paused) fade(a, 0, 500, () => { a.pause(); a.currentTime = 0; });
   }
 
+  // Renderiza offline um efeito ('sfx') ou uma música sintetizada ('song') e devolve PCM 16 bits estéreo
+  // em base64 (44,1 kHz). Usado pela ferramenta de gravação de trailer (tools/record_showcase.py).
+  async function renderOffline(kind, name, seconds) {
+    const sr = 44100, OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    const off = new OAC(2, Math.ceil(sr * seconds), sr);
+    const saved = [ctx, master, sfxBus, musicBus, noiseBuf];
+    ctx = off;
+    master = off.createGain(); master.gain.value = 0.8; master.connect(off.destination);
+    sfxBus = off.createGain(); sfxBus.gain.value = 0.55; sfxBus.connect(master);
+    musicBus = off.createGain(); musicBus.gain.value = 0.22; musicBus.connect(master);
+    noiseBuf = off.createBuffer(1, sr * 0.6, sr);
+    const nd = noiseBuf.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    try {
+      if (kind === 'sfx') SFX[name]();
+      else {
+        const sg = SONGS[name], spb = 60 / sg.bpm / 2, Ls = sg.lead.split(' '), Bs = sg.bass.split(' ');
+        for (let i = 0; i < Ls.length; i++) {
+          const l = N(Ls[i]), b = N(Bs[i % Bs.length]);
+          if (l) tone(l, spb * 1.6, { type: 'square', vol: 0.08, delay: i * spb, bus: musicBus });
+          if (b) tone(b, spb * 1.8, { type: 'triangle', vol: 0.3, delay: i * spb, bus: musicBus });
+        }
+      }
+    } finally { [ctx, master, sfxBus, musicBus, noiseBuf] = saved; }
+    const buf = await off.startRendering();
+    const L = buf.getChannelData(0), R = buf.getChannelData(1), out = new Int16Array(L.length * 2);
+    for (let i = 0; i < L.length; i++) { out[2 * i] = Math.max(-1, Math.min(1, L[i])) * 32767; out[2 * i + 1] = Math.max(-1, Math.min(1, R[i])) * 32767; }
+    let bin = ''; const u8 = new Uint8Array(out.buffer);
+    for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+    return btoa(bin);
+  }
+
   Z.audio = {
+    renderOffline,
     init() {
       init(); if (ctx && ctx.state === 'suspended') ctx.resume(); if (!timer) timer = setInterval(schedule, 50);
       if (!unlocked) { unlocked = true; startFileTrack(); }
