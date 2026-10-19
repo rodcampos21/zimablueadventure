@@ -12,17 +12,24 @@ Esta versão é o **Tutorial**: atravessa a cidadezinha e termina na luta contra
 | Ação | Teclado | Toque | Gamepad |
 |---|---|---|---|
 | Andar | ← → ou A D | ◀ ▶ | Direcional / analógico |
+| Pular (segure para ir mais alto) | Espaço, W ou ↑ | Pular | A |
 | Agachar | ↓ ou S | ▼ | ↓ |
-| Rolar | K, X ou Shift | Rolar | A |
-| Rede (ataque) | J ou Z | Rede | X |
-| Bolhas (especial) | L ou C | Bolhas | B / Y |
+| Rolar | K, X ou Shift | Rolar | B / RB |
+| Rede (ataque, também no ar) | J ou Z | Rede | X |
+| Bolhas (especial) | L ou C | Bolhas | Y / RT |
 | Pausa | Esc ou P | ❚❚ | Start |
 
 **Rolar no tempo certo:** a invencibilidade só existe num trecho curto do giro. Se um golpe passar por você nesse momento, é **Esquiva Perfeita**: câmera lenta + Carisma extra.
 **Carisma:** cada golpe da rede enche um pouco. Cada carga gasta dispara um jato de bolhas (que também aciona alavancas distantes).
 
+## Visual em HD
+- O canvas é desenhado na resolução real da tela (inclui telas Retina/celulares de alta densidade), não mais em 640×360 ampliado.
+- Sprites do Zima recortados em 3× de resolução, com remoção de fundo, realce de contraste/nitidez e contorno.
+- Ampliar usa vizinho mais próximo (`imageSmoothingEnabled = false` + `image-rendering: pixelated`, o equivalente web do `RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR` do Java); reduzir usa filtro de alta qualidade, para não serrilhar.
+- Menu **Imagem** (no título e na pausa): Brilho, Contraste e Qualidade (Alta/Média/Leve).
+
 ## O que tem no tutorial
-Rodoviária → Rua do Comércio (marquise baixa) → Praça dos Pombos → Rua dos Cabos Eleitorais → Banco da Praça (checkpoint) → um segredo escondido → Córrego Manso (ponte e alavanca) → Largo da Matriz (um baú que só se alcança pulando… depois) → **Chefe: Coronel Bigodão**, com duas fases.
+Rodoviária (primeiro pulo, por cima das malas) → Rua do Comércio (marquise baixa) → Praça dos Pombos → Rua dos Cabos Eleitorais → Banco da Praça (checkpoint) → um segredo escondido → Córrego Manso (ponte e alavanca) → Largo da Matriz (suba pelos caixotes até a sacada: o baú dá +1 de Carisma máximo) → **Chefe: Coronel Bigodão**, com duas fases.
 
 O design se baseia numa análise de Super Metroid, Castlevania: Symphony of the Night, Hollow Knight, Ori and the Will of the Wisps e Metroid Dread. Veja [`docs/GDD.md`](docs/GDD.md).
 

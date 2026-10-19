@@ -4,7 +4,7 @@
   const ACTIONS = ['left', 'right', 'down', 'up', 'attack', 'roll', 'special', 'pause', 'confirm', 'jump'];
   const KEYMAP = {
     ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right',
-    ArrowDown: 'down', KeyS: 'down', ArrowUp: 'up', KeyW: 'jump', Space: 'jump',
+    ArrowDown: 'down', KeyS: 'down', ArrowUp: 'jump', KeyW: 'jump', Space: 'jump',
     KeyJ: 'attack', KeyZ: 'attack', KeyK: 'roll', KeyX: 'roll', ShiftLeft: 'roll', ShiftRight: 'roll',
     KeyL: 'special', KeyC: 'special', Escape: 'pause', KeyP: 'pause', Enter: 'confirm',
   };
@@ -29,9 +29,10 @@
     const a = KEYMAP[e.code];
     if (e.code === 'KeyM') Z.audio && Z.audio.toggle();
     if (a) { if (!e.repeat) taps.add(a); src.key[a] = true; e.preventDefault(); }
+    if (e.code === 'ArrowUp' || e.code === 'KeyW') { if (!e.repeat) taps.add('up'); src.key.up = true; }   // "cima" nos menus
     I.mode = 'keys'; gesture();
   });
-  addEventListener('keyup', e => { const a = KEYMAP[e.code]; if (a) src.key[a] = false; });
+  addEventListener('keyup', e => { const a = KEYMAP[e.code]; if (a) src.key[a] = false; if (e.code === 'ArrowUp' || e.code === 'KeyW') src.key.up = false; });
   addEventListener('blur', () => { src.key = {}; src.touch = {}; });
 
   // ---------- toque: cada dedo é rastreado e pode deslizar entre botões ----------
@@ -87,9 +88,10 @@
       if (b(15) || ax > 0.4) src.pad.right = true;
       if (b(13) || ay > 0.55) src.pad.down = true;
       if (b(12) || ay < -0.6) src.pad.up = true;
+      if (b(0)) src.pad.jump = true;
       if (b(2)) src.pad.attack = true;
-      if (b(0) || b(5) || b(7)) src.pad.roll = true;
-      if (b(1) || b(3)) src.pad.special = true;
+      if (b(1) || b(5)) src.pad.roll = true;
+      if (b(3) || b(7)) src.pad.special = true;
       if (b(9)) src.pad.pause = true;
       if (b(0)) src.pad.confirm = true;
     }
@@ -109,9 +111,9 @@
   // nome do botão para mostrar nas placas
   I.label = a => {
     const t = {
-      keys: { attack: 'J', roll: 'K', special: 'L', down: '↓', move: '← →', pause: 'Esc' },
-      touch: { attack: 'REDE', roll: 'ROLAR', special: 'BOLHAS', down: '▼', move: '◀ ▶', pause: '❚❚' },
-      pad: { attack: 'X', roll: 'A', special: 'B', down: '↓', move: '◀ ▶', pause: 'Start' },
+      keys: { attack: 'J', roll: 'K', special: 'L', jump: 'Espaço', down: '↓', move: '← →', pause: 'Esc' },
+      touch: { attack: 'REDE', roll: 'ROLAR', special: 'BOLHAS', jump: 'PULAR', down: '▼', move: '◀ ▶', pause: '❚❚' },
+      pad: { attack: 'X', roll: 'B', special: 'Y', jump: 'A', down: '↓', move: '◀ ▶', pause: 'Start' },
     };
     return t[I.mode][a];
   };

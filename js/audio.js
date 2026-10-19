@@ -55,6 +55,8 @@
     pop: () => tone(Z.rand(900, 1300), 0.05, { type: 'sine', to: 300, vol: 0.15 }),
     hurt: () => { tone(300, 0.25, { type: 'sawtooth', to: 70, vol: 0.28 }); noise(0.15, { freq: 400, vol: 0.2 }); },
     step: () => noise(0.03, { freq: 300, vol: 0.06 }),
+    jump: () => { tone(320, 0.12, { type: 'square', to: 620, vol: 0.12 }); noise(0.06, { freq: 900, vol: 0.08 }); },
+    chest: () => [523, 784, 1046, 1318, 1568].forEach((f, i) => tone(f, 0.25, { type: 'triangle', delay: i * 0.08, vol: 0.2 })),
     land: () => noise(0.07, { freq: 220, vol: 0.15 }),
     break: () => { noise(0.4, { freq: 300, to: 80, vol: 0.4, filter: 'lowpass' }); tone(90, 0.3, { type: 'square', to: 40, vol: 0.2 }); },
     lever: () => { tone(400, 0.05, { vol: 0.2 }); tone(260, 0.12, { delay: 0.06, vol: 0.2 }); },

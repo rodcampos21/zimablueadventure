@@ -24,12 +24,13 @@
 | Ação | Teclado | Toque | Detalhe |
 |---|---|---|---|
 | Andar | ← → / A D | Direcional | Aceleração curta, freio rápido. |
+| Pular | Espaço / W / ↑ | Botão **Pular** | Pulo variável (segurar = ~4,7 tiles; toque rápido = ~1,6), *coyote time* de 0,1 s, buffer de entrada, gravidade maior na descida e "flutuar" no topo enquanto segura. Dá para atacar e soprar bolhas no ar. |
 | Agachar | ↓ / S | ▼ | Reduz a altura: passa sob toldos baixos e desvia de projéteis altos. Anda agachado devagar. |
 | Rolar | K / X / Shift | Botão **Rolar** | 0,45 s, passa por baixo de obstáculos. **Invencível só entre 0,05 s e 0,22 s**. Desviar de um golpe nessa janela = Esquiva Perfeita (+Carisma, câmera lenta). |
 | Ataque básico | J / Z | Botão **Rede** | Golpe com a rede, 1 de dano, enche 1/4 de Carisma por acerto. |
 | Bolhas (especial) | L / C | Botão **Bolhas** | Custa 1 carga de Carisma (máx. 3). Dispara um jato de bolhas que atravessa o cenário, 2 de dano por bolha e aciona alavancas distantes. |
 
-Ainda **sem pulo**: ele será a primeira grande habilidade após o tutorial.
+O pulo alcança degraus de até 4 tiles. O desnível de 6 tiles do Córrego e o portão da arena continuam fora de alcance de propósito (espaço para habilidades futuras, como pulo duplo).
 
 ## 3. O tutorial: "Vila Azul do Interior"
 
@@ -42,7 +43,7 @@ Fluxo da esquerda para a direita, sempre descendo (sem pulo, só se cai de degra
 5. **Banco da praça** — checkpoint (salva e cura).
 6. **Muro rachado** — segredo com a Coxinha (+1 vida).
 7. **Córrego** — ponte levadiça erguida; a alavanca está do outro lado → Bolhas.
-8. **Sacada da igreja** — baú alto e inalcançável ("volte quando souber pular").
+8. **Sacada da igreja** — subir pelos caixotes e abrir o baú com a rede: Medalha do Avô (+1 de Carisma máximo).
 9. **Chefe: Coronel Bigodão, o Prefeito Eterno** — em frente à Prefeitura.
 
 ### Chefe — Coronel Bigodão (24 de vida)
@@ -61,7 +62,7 @@ Vitória → tela "Fim do Tutorial" com tempo, mortes e esquivas perfeitas.
 - Progresso salvo em `localStorage` (banco e segredos).
 
 ## 5. Próximos passos sugeridos
-1. Pulo ("Pulo do Gato") e a sacada da igreja como primeira recompensa.
+1. Pulo duplo ("Pulo do Gato") para alcançar desníveis de 6 tiles e novas rotas na cidade.
 2. Mapa da cidade (estilo Hollow Knight, comprado de um personagem).
 3. Novas áreas: Fazenda, Feira, Câmara dos Vereadores.
 4. Sprites próprios dos inimigos e do chefe, no mesmo estilo do Zima.

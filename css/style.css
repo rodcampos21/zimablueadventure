@@ -6,6 +6,7 @@ html, body {
 }
 #stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
 #game {
+  /* equivalente web do NEAREST_NEIGHBOR: sem borrar ao escalar */
   image-rendering: pixelated; image-rendering: crisp-edges;
   background: #000; display: block;
   box-shadow: 0 0 0 1px #2a2142, 0 20px 60px rgba(0,0,0,.6);
@@ -30,13 +31,14 @@ html, body {
 #dpad .tb[data-k="down"] { width: 54px; height: 54px; border-radius: 16px; font-size: 16px; }
 #actions {
   position: absolute; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom));
-  width: 200px; height: 170px;
+  width: 220px; height: 176px;
 }
-#actions .tb { position: absolute; width: 64px; height: 64px; font-size: 8px; }
+#actions .tb { position: absolute; width: 62px; height: 62px; font-size: 7px; }
 #actions .tb span { pointer-events: none; }
-#actions [data-k="attack"] { right: 0; bottom: 0; width: 84px; height: 84px; font-size: 9px; background: rgba(60,110,200,.4); }
-#actions [data-k="roll"] { right: 96px; bottom: 0; }
-#actions [data-k="special"] { right: 22px; bottom: 96px; background: rgba(120,200,255,.3); }
+#actions [data-k="jump"] { right: 0; bottom: 0; width: 82px; height: 82px; font-size: 8px; background: rgba(90,170,110,.42); }
+#actions [data-k="attack"] { right: 92px; bottom: 6px; width: 70px; height: 70px; background: rgba(60,110,200,.42); }
+#actions [data-k="roll"] { right: 10px; bottom: 94px; }
+#actions [data-k="special"] { right: 86px; bottom: 90px; background: rgba(120,200,255,.32); }
 
 #topbar { position: fixed; top: max(8px, env(safe-area-inset-top)); right: max(8px, env(safe-area-inset-right)); display: flex; gap: 6px; }
 #topbar button {

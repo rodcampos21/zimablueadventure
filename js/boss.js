@@ -119,19 +119,19 @@
     draw(ctx, cam) {
       if (this.state === 'dying' && Math.floor(this.st * 16) % 2) return;
       const x = this.x - cam.x, y = this.y - cam.y;
-      ctx.fillStyle = 'rgba(20,10,30,.3)'; ctx.fillRect(Math.round(x - 26), Math.round(y - 2), 52, 3);
+      ctx.fillStyle = 'rgba(25,12,30,.32)'; ctx.beginPath(); ctx.ellipse(x, y - 0.5, 30, 3.5, 0, 0, 7); ctx.fill();
       // telegrafia visível
       if (this.state === 'stompTele' || this.state === 'raise' || this.state === 'megaTele') {
         const k = 0.5 + Math.sin(this.t * 30) * 0.5;
         ctx.fillStyle = `rgba(255,${this.state === 'stompTele' ? 80 : 220},80,${0.15 + k * 0.2})`;
-        ctx.beginPath(); ctx.ellipse(Math.round(x), Math.round(y - 48), 34, 56, 0, 0, 7); ctx.fill();
-        Z.text(ctx, '!', Math.round(x), Math.round(y - 126), 12, this.state === 'stompTele' ? '#ff6a6a' : '#ffe14d', 'center');
+        ctx.beginPath(); ctx.ellipse(x, y - 52, 36, 60, 0, 0, 7); ctx.fill();
+        Z.text(ctx, '!', x, y - 132, 18, this.state === 'stompTele' ? '#ff6a6a' : '#ffe14d', 'center', '#3a1a10', Z.FONT2, 800);
       }
-      const shake = this.state === 'stompTele' ? Math.round(Z.rand(-1, 1)) : 0;
+      const shake = this.state === 'stompTele' ? Z.rand(-1, 1) : 0;
       Z.art.boss(ctx, x + shake, y, this.facing, this.t, this.pose, this.flash > 0, this.phase2);
       if (this.state === 'megaTele') {
         const r = 6 + (1 - Math.max(0, this.st) / 0.8) * 16;
-        ctx.strokeStyle = '#fff6c8'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(Math.round(x + this.facing * 54), Math.round(y - 63), r, 0, 7); ctx.stroke();
+        ctx.strokeStyle = '#fff6c8'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x + this.facing * 50, y - 62, r, 0, 7); ctx.stroke();
       }
     }
   }

@@ -2,7 +2,7 @@
 import os, sys, json
 from PIL import Image
 sys.path.insert(0, os.path.dirname(__file__))
-from extract import run, ROOT
+from extract import run, ROOT, OUT_SCALE
 
 ANIMS = {
     'idle':       (['idle_walk%d' % i for i in range(8)], 7, True),
@@ -15,7 +15,10 @@ ANIMS = {
     'attack':     (['attack1', 'attack4', 'attack5', 'attack6', 'attack7', 'attack8'], 20, False),
     'special':    (['special1', 'special2', 'special3', 'special4', 'special5', 'special7', 'special10'], 14, False),
     'kneel':      (['roll10'], 1, True),
-    'fall':       (['attack9'], 1, True),
+    'jump':       (['run0'], 1, True),
+    'apex':       (['run4'], 1, True),
+    'fall':       (['attack10'], 1, True),
+    'land':       (['crouch3'], 1, True),
 }
 EXTRA = ['special8', 'special13']   # efeitos de bolha
 
@@ -27,7 +30,7 @@ def main():
             if f not in used: used.append(f)
     used += EXTRA
     # empacotamento simples em prateleiras
-    W = 1024; x = y = shelf = 0; pos = {}
+    W = 2048; x = y = shelf = 0; pos = {}
     for n in used:
         img = frames[n][0]
         if x + img.width + 2 > W: x = 0; y += shelf + 2; shelf = 0
@@ -44,7 +47,7 @@ def main():
     anims = {k: {'frames': v[0], 'fps': v[1], 'loop': v[2]} for k, v in ANIMS.items()}
     with open(os.path.join(ROOT, 'js/atlas.js'), 'w') as f:
         f.write('// Gerado por tools/pack.py — não editar à mão.\n')
-        f.write('window.ZIMA_ATLAS = ' + json.dumps({'image': 'assets/zima.png', 'frames': meta, 'anims': anims}, separators=(',', ':')) + ';\n')
+        f.write('window.ZIMA_ATLAS = ' + json.dumps({'image': 'assets/zima.png', 'scale': OUT_SCALE, 'frames': meta, 'anims': anims}, separators=(',', ':')) + ';\n')
     print('atlas', W, H, len(used), 'quadros')
 
 if __name__ == '__main__':

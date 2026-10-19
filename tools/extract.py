@@ -1,13 +1,14 @@
 # Extrai quadros das folhas de sprite do Zima, remove o fundo e monta o atlas do jogo.
 # Uso: python3 tools/extract.py   (gera assets/zima.png e js/atlas.js)
 import sys, json, os, numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 from scipy import ndimage as ndi
 sys.path.insert(0, os.path.dirname(__file__))
 from segment import bg_color
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TARGET_H = 64          # altura do Zima em pé, em pixels do jogo
+TARGET_H = 64          # altura do Zima em pé, em unidades do mundo do jogo
+OUT_SCALE = 3          # resolução extra dos quadros (HD): 3 pixels por unidade
 REF_H = {'big': 483, 'crouch': 217}
 
 SHEETS = {
@@ -58,25 +59,52 @@ def cut_frame(a, bg, d, lab, comp, scale):
     cx0, cx1 = comp['sl'][1].start - x0, comp['sl'][1].stop - x0
     region[:, :max(0, cx0)] = False; region[:, cx1:] = False
     px = a[y0:y1, x0:x1].astype(float); dd = d[y0:y1, x0:x1]
-    alpha = np.clip((dd - 45) / 55, 0, 1) * region
-    # remove o "vazamento" do magenta nas bordas
+    # fundo = regiões parecidas com o magenta e grandes o bastante (inclui a malha da rede);
+    # a pele, mesmo sendo rosada, fica de fora por não estar ligada ao fundo
+    near = (dd < 52) & (px[..., 1] < bg[1] + 20)
+    lab2, n2 = ndi.label(near)
+    sizes = ndi.sum(near, lab2, range(1, n2 + 1))
+    big = np.zeros(n2 + 1, bool); big[1:] = sizes > 25
+    border = np.unique(np.concatenate([lab2[0], lab2[-1], lab2[:, 0], lab2[:, -1]]))
+    big[border[border > 0]] = True
+    bgreg = big[lab2] | ~region
+    fg = ~bgreg
+    fg = ndi.binary_opening(fg, iterations=1) | (fg & (dd > 120))
+    # pixels de borda: estima a mistura com o fundo e remove o magenta
+    edge = fg & ndi.binary_dilation(bgreg, iterations=2)
+    alpha = fg.astype(float)
+    ae = np.clip((dd - 25) / 90, 0.15, 1)
+    alpha[edge] = ae[edge]
     al = np.maximum(alpha, 1e-3)[..., None]
     col = np.clip((px - (1 - al) * bg) / al, 0, 255)
     rgba = np.dstack([col * alpha[..., None], alpha * 255]).astype(np.float32)
-    # reduz com média (pré-multiplicado)
+    # reduz em alta qualidade (Lanczos sobre canais pré-multiplicados)
     H, W = alpha.shape
     nw, nh = max(1, round(W * scale)), max(1, round(H * scale))
-    chans = [np.array(Image.fromarray(rgba[..., i]).resize((nw, nh), Image.BOX)) for i in range(4)]
-    A = chans[3] / 255.0
-    rgb = np.stack(chans[:3], -1) / np.maximum(A, 1e-3)[..., None]
-    A = np.where(A > 0.45, 1.0, 0.0)          # borda nítida, estilo pixel art
-    out = np.dstack([np.clip(rgb, 0, 255), A * 255]).astype(np.uint8)
+    chans = [np.array(Image.fromarray(rgba[..., i]).resize((nw, nh), Image.LANCZOS)) for i in range(4)]
+    A = np.clip(chans[3] / 255.0, 0, 1)
+    rgb = np.clip(np.stack(chans[:3], -1) / np.maximum(A, 1e-3)[..., None], 0, 255)
+    A = np.where(A > 0.5, 1.0, 0.0)          # borda nítida, sem halo
+    # realce: contraste, cor e nitidez
+    im = Image.fromarray(rgb.astype(np.uint8), 'RGB')
+    im = ImageEnhance.Contrast(im).enhance(1.10)
+    im = ImageEnhance.Color(im).enhance(1.12)
+    im = ImageEnhance.Brightness(im).enhance(1.04)
+    im = im.filter(ImageFilter.UnsharpMask(radius=1.4, percent=80, threshold=2))
+    rgb = np.array(im).astype(float)
+    # contorno escuro de 1px onde a borda ficou clara (lê melhor sobre o cenário)
+    inner = ndi.binary_erosion(A > 0)
+    edge = (A > 0) & ~inner
+    lum = rgb.mean(-1)
+    fix = edge & (lum > 90)
+    rgb[fix] = rgb[fix] * 0.35
+    out = np.dstack([rgb, A * 255]).astype(np.uint8)
     img = Image.fromarray(out, 'RGBA')
     bbox = img.getbbox(); img = img.crop(bbox)
     o = np.array(img)
     # âncora: centro de massa dos pixels escuros (terno/cabelo) e base dos pés
     lum = o[..., :3].mean(-1); dark = (o[..., 3] > 0) & (lum < 70)
-    ys, xs = np.nonzero(dark if dark.sum() > 20 else o[..., 3] > 0)
+    ys, xs = np.nonzero(dark if dark.sum() > 60 else o[..., 3] > 0)
     ax = float(xs.mean()); ay = float(np.nonzero(o[..., 3] > 0)[0].max() + 1)
     return img, round(ax), round(ay)
 
@@ -89,19 +117,18 @@ def run(select=None, contact=None):
         ref_w = REF_H[ref] * 0.95
         allc = []
         for c in comps: allc += split_wide(d, hard, lab, c, ref_w)
-        scale = TARGET_H / REF_H[ref]
+        scale = TARGET_H * OUT_SCALE / REF_H[ref]
         for i, c in enumerate(allc):
             frames[f'{name}{i}'] = cut_frame(a, bg, d, lab, c, scale)
     if contact:
         names = list(frames)
-        cw, ch = 140, 90; cols = 12
+        cw, ch = 140 * OUT_SCALE // 2, 90 * OUT_SCALE // 2; cols = 12
         sheet = Image.new('RGBA', (cols * cw, ((len(names) + cols - 1) // cols) * ch), (60, 70, 90, 255))
         dr = ImageDraw.Draw(sheet)
         for k, n in enumerate(names):
             img, ax, ay = frames[n]
             bx, by = (k % cols) * cw, (k // cols) * ch
-            sheet.alpha_composite(img, (bx + 50 - ax, by + 78 - ay))
-            dr.line([bx + 50, by + 78, bx + 50, by + 74], fill=(255, 0, 0))
+            sheet.alpha_composite(img.resize((img.width // 2, img.height // 2), Image.LANCZOS), (bx + 75 - ax // 2, by + 125 - ay // 2))
             dr.text((bx + 2, by + 2), n, fill=(255, 255, 0))
         sheet.save(contact)
     return frames
