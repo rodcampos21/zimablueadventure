@@ -40,8 +40,8 @@ Fluxo da esquerda para a direita, sempre descendo (sem pulo, só se cai de degra
 
 1. **Rodoviária** — Zima desce do ônibus e conhece **Thyberius, o Mago**, que dá a missão principal e encanta a rede de bolhas. Placa: andar e pular (malas no caminho).
 2. **Rua do Comércio** — toldo da padaria baixo demais → agachar.
-3. **Praça dos Pombos** — pombos atacam em rasante → ataque básico.
-4. **Cabo eleitoral rival** — joga santinhos na altura da cabeça → agachar ou rolar. Placa explica a janela perfeita.
+3. **Praça do Coreto** — primeiros **Atendentes**: o único ataque deles é arremessar hambúrguer → ataque básico (a rede também rebate o hambúrguer).
+4. **Avenida Central** — de perto o hambúrguer vem reto na altura do peito (agachar, pular ou rolar); de longe vem em arco mirando o Zima (sair do lugar). Placa explica a janela perfeita.
 5. **Banco da praça** — checkpoint (salva e cura).
 6. **Muro rachado** — segredo com a Coxinha (+1 vida).
 7. **Córrego** — ponte levadiça erguida; a alavanca está do outro lado → Bolhas.
@@ -52,7 +52,7 @@ Fluxo da esquerda para a direita, sempre descendo (sem pulo, só se cai de degra
 - **Investida do Palanque**: bate o pé (poeira) e atravessa a arena → rolar através dele.
 - **Chuva de Santinhos**: arremessa 3 a 5 panfletos na altura da cabeça → agachar ou rolar.
 - **Discurso no Megafone**: onda sonora rente ao chão → só rolando no tempo certo.
-- **Fase 2 (≤ 50%)**: fica mais rápido, encadeia golpes e chama pombos.
+- **Fase 2 (≤ 50%)**: fica mais rápido, encadeia golpes e chama dois Atendentes.
 
 Vitória → tela "Fim do Tutorial" com tempo, mortes e esquivas perfeitas.
 

@@ -104,7 +104,7 @@
           if (Math.random() < 0.4) Z.emit(this.x + Z.rand(-30, 30), this.y - Z.rand(0, 90), 1, { color: '#ff8a8a', speed: 80, gravity: -60, life: 0.5, size: 3 });
           if (this.st <= 0) {
             const a = L.arena;
-            g.enemies.push(new Z.Pombo(a.x0 + 120, this.y - 150), new Z.Pombo(a.x1 - 120, this.y - 150));
+            g.enemies.push(new Z.Atendente(a.x0 + 70, this.y), new Z.Atendente(a.x1 - 70, this.y));
             this.state = 'idle'; this.st = 0.6;
           }
           break;

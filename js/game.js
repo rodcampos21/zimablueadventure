@@ -7,7 +7,7 @@
   const I = Z.input;
   const SAVE_KEY = 'zima_save_v1', SET_KEY = 'zima_settings_v1';
 
-  const AREAS = [[0, 'Rodoviária'], [40, 'Rua do Comércio'], [75, 'Praça dos Pombos'], [110, 'Rua dos Cabos Eleitorais'], [160, 'Córrego Manso'], [198, 'Largo da Matriz'], [240, 'Prefeitura Municipal']];
+  const AREAS = [[0, 'Rodoviária'], [40, 'Rua do Comércio'], [75, 'Praça do Coreto'], [110, 'Avenida Central'], [160, 'Córrego Manso'], [198, 'Largo da Matriz'], [240, 'Prefeitura Municipal']];
   const QUALITY = [['Alta', 4], ['Média', 2.5], ['Leve', 1.5]];     // limite de pixels reais por unidade do mundo
 
   const g = Z.game = {
@@ -65,7 +65,7 @@
     g.level.setResolution(chunkRes());
     const sp = g.level.spawns[save.cp] || g.level.spawns.start;
     g.player = new Z.Player(sp.x, sp.y, save);
-    g.enemies = g.level.enemies.map(e => e.type === 'pombo' ? new Z.Pombo(e.x, e.y) : new Z.Cabo(e.x, e.y));
+    g.enemies = g.level.enemies.map(e => new Z.Atendente(e.x, e.y));
     g.projectiles = []; g.pickups = []; Z.particles.length = 0; Z.texts.length = 0;
     g.boss = null; g.bossStarted = false; Z.cam.lock = null;
     Z.cam.follow(g.player, g.level, 0, true);
@@ -85,7 +85,7 @@
         { who: 'Thyberius', text: 'Sou Thyberius, o Mago. Há décadas o Coronel Bigodão enfeitiça esta cidade com santinhos e promessas vazias.' },
         { who: 'Zima', text: 'Vim mudar isso. Meu sonho é a Presidência... mas por onde eu começo?' },
         { who: 'Thyberius', text: 'Pelo começo, meu jovem. Sua missão: RECRUTAR ALIADOS e chegar à Prefeitura de Capitão Leônidas Marques.' },
-        { who: 'Thyberius', text: 'Encantei sua rede: agora ela sopra bolhas de carisma. Vá! E cuidado com os pombos da praça.' },
+        { who: 'Thyberius', text: 'Encantei sua rede: agora ela sopra bolhas de carisma. Vá! E cuidado com os atendentes do Coronel: eles arremessam hambúrgueres.' },
       ], () => { g.hud.msg = { title: 'NOVA MISSÃO', text: 'Recrutar aliados e chegar à Prefeitura de Capitão Leônidas Marques.', t: 0 }; Z.audio.play('chest'); });
     }
   }
@@ -365,7 +365,7 @@
     for (const pk of g.pickups) pk.draw(ctx, cam);
     for (const e of g.enemies) if (!e.dead || e === g.boss) {
       // sombra dos inimigos que andam no chão
-      if (e.h > 20 && !(e instanceof Z.Pombo)) { ctx.fillStyle = 'rgba(25,12,30,.28)'; ctx.beginPath(); ctx.ellipse(e.x - cam.x, e.y - cam.y - 0.5, e.w * 0.8, 2.4, 0, 0, 7); ctx.fill(); }
+      if (e.h > 20 && !e.dying) { ctx.fillStyle = 'rgba(25,12,30,.28)'; ctx.beginPath(); ctx.ellipse(e.x - cam.x, e.y - cam.y - 0.5, e.w * 0.8, 2.4, 0, 0, 7); ctx.fill(); }
       e.draw(ctx, cam);
     }
     g.player.draw(ctx, cam);
@@ -457,7 +457,7 @@
     for (let i = 0; i < p.maxHp; i++) heart(58 + i * 15, 22, Z.clamp(p.hp - i, 0, 1));
     for (let i = 0; i < p.maxCar; i++) bubbleIcon(58 + i * 17, 40, Z.clamp(p.carisma - i, 0, 1), g.hud.flashCarisma > 0 && Math.floor(g.t * 16) % 2);
     // missão principal
-    if (g.save.mission && !g.dialog) {
+    if (g.save.mission && !g.dialog && !g.bossStarted) {
       Z.text(ctx, '★ Missão', 12, 58, 10.5, '#ffe68a', 'left', '#1d1430', Z.FONT2, 800);
       Z.text(ctx, MISSION, 12, 70, 10.5, '#f6f1e6', 'left', '#1d1430', Z.FONT2, 700);
     }
@@ -473,7 +473,7 @@
     }
     // placa próxima
     const s = nearSign();
-    if (s && !g.dialog) {
+    if (s && !g.dialog && !g.hud.msg) {
       const lines = Z.wrap(ctx, signText(s.text), 372, 13, Z.FONT2, 700);
       const h = lines.length * 16 + 16, w = 396, x = (Z.W - w) / 2, y = 90;
       panel(x, y, w, h, 'wood');

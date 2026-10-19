@@ -29,7 +29,7 @@ Esta versão é o **Tutorial**: atravessa a cidadezinha e termina na luta contra
 - Menu **Imagem** (no título e na pausa): Brilho, Contraste e Qualidade (Alta/Média/Leve).
 
 ## O que tem no tutorial
-Rodoviária (primeiro pulo, por cima das malas) → Rua do Comércio (marquise baixa) → Praça dos Pombos → Rua dos Cabos Eleitorais → Banco da Praça (checkpoint) → um segredo escondido → Córrego Manso (ponte e alavanca) → Largo da Matriz (suba pelos caixotes até a sacada: o baú dá +1 de Carisma máximo) → **Chefe: Coronel Bigodão**, com duas fases.
+Rodoviária (primeiro pulo, por cima das malas) → Rua do Comércio (marquise baixa) → Praça do Coreto → Avenida Central (Atendentes que arremessam hambúrguer) → Banco da Praça (checkpoint) → um segredo escondido → Córrego Manso (ponte e alavanca) → Largo da Matriz (suba pelos caixotes até a sacada: o baú dá +1 de Carisma máximo) → **Chefe: Coronel Bigodão**, com duas fases.
 
 O design se baseia numa análise de Super Metroid, Castlevania: Symphony of the Night, Hollow Knight, Ori and the Will of the Wisps e Metroid Dread. Veja [`docs/GDD.md`](docs/GDD.md).
 
@@ -43,12 +43,12 @@ js/audio.js           efeitos e músicas sintetizados (Web Audio)
 js/art.js             cenário e personagens em pixel art procedural
 js/level.js           mapa de Capitão Leônidas Marques, colisão, objetos
 js/player.js          o Zima
-js/enemies.js         pombos, cabos eleitorais, projéteis, itens
+js/enemies.js         Atendente (inimigo comum), hambúrguer, projéteis do chefe, itens
 js/boss.js            Coronel Bigodão
 js/game.js            laço principal, HUD, diálogos, menus, salvamento
 js/atlas.js           (gerado) quadros do Zima
 assets/zima.png       (gerado) atlas dos sprites do Zima
-raw/                  folhas de sprite originais (Zima e Thyberius)
+raw/                  folhas de sprite originais (Zima, Thyberius e Atendente)
 tools/                scripts Python para recortar sprites e gerar o arquivo único
 ```
 

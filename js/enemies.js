@@ -1,4 +1,4 @@
-// Inimigos (Pombo, Cabo Eleitoral), projéteis (bolhas, santinhos, onda sonora) e itens.
+// Inimigos: Atendente (arremessa hambúrguer); projéteis (bolhas, hambúrguer, santinhos e onda sonora do chefe) e itens.
 'use strict';
 (() => {
   const G = () => Z.game;
@@ -24,69 +24,46 @@
     common(dt) { this.t += dt; this.flash = Math.max(0, this.flash - dt); }
   }
 
-  // ---------------- Pombo da Praça ----------------
-  class Pombo extends Enemy {
-    constructor(x, y) { super(x, y, 18, 13, 2); this.hx = x; this.hy = y; this.state = 'hover'; this.cd = Z.rand(0.5, 1.5); this.colors = ['#8d90a0', '#686b7a', '#5aa182', '#ffffff']; }
-    update(dt) {
-      this.common(dt);
-      const p = G().player, dx = p.x - this.x, dy = (p.y - 30) - this.y;
-      this.cd -= dt;
-      if (this.kb) { this.x += this.kb * dt; this.kb = Z.approach(this.kb, 0, 500 * dt); }
-      switch (this.state) {
-        case 'hover':
-          this.x = Z.lerp(this.x, this.hx + Math.sin(this.t * 1.3) * 28, 2 * dt);
-          this.y = Z.lerp(this.y, this.hy + Math.sin(this.t * 2.6) * 6, 3 * dt);
-          this.facing = Z.sign(dx);
-          if (this.cd <= 0 && Math.abs(dx) < 150 && Math.abs(p.x - this.hx) < 200 && dy > -20 && dy < 150 && p.state !== 'dead') {
-            this.state = 'alert'; this.st = 0.45; Z.audio.play('coo');
-          }
-          break;
-        case 'alert':
-          this.st -= dt; this.y -= 20 * dt;
-          if (this.st <= 0) {
-            const tx = p.x, ty = p.y - 2, d = Math.hypot(tx - this.x, ty - this.y) || 1;
-            this.vx = (tx - this.x) / d * 270; this.vy = (ty - this.y) / d * 270;
-            this.facing = Z.sign(this.vx); this.state = 'dive'; this.st = 1.3;
-          }
-          break;
-        case 'dive': {
-          this.st -= dt; this.x += this.vx * dt; this.y += this.vy * dt;
-          const L = G().level;
-          if (L.solidAt(this.x, this.y)) {
-            // pousa e fica bicando o chão: a hora de bater!
-            this.y = Math.floor(this.y / Z.T) * Z.T; this.state = 'peck'; this.st = 1.2;
-            Z.emit(this.x, this.y, 5, { color: '#c9b9a0', speed: 50, gravity: 0, life: 0.3, size: 2 });
-          } else if (this.st <= 0) { this.state = 'return'; this.cd = 1.5; }
-          break;
-        }
-        case 'peck':
-          this.st -= dt;
-          if (this.st <= 0) { this.state = 'return'; this.cd = 1.6; }
-          break;
-        case 'return': {
-          const rx = this.hx - this.x, ry = this.hy - this.y, d = Math.hypot(rx, ry);
-          if (d < 4) { this.state = 'hover'; break; }
-          this.x += rx / d * 95 * dt; this.y += ry / d * 95 * dt; this.facing = Z.sign(rx);
-          break;
-        }
+  // ---------------- Atendente (inimigo comum: só arremessa hambúrguer) ----------------
+  const NOBOX = { l: -9, r: -8, t: -9, b: -8 };
+  const THROW_T = 0.36;
+  class Atendente extends Enemy {
+    constructor(x, y) {
+      super(x, y, 18, 54, 3);
+      this.hx = x; this.state = 'walk'; this.cd = Z.rand(0.8, 1.6); this.dir = Math.random() < 0.5 ? -1 : 1;
+      this.colors = ['#d8262e', '#1e1e24', '#f2c230', '#e9b07a'];
+    }
+    hurtbox() { return this.dying ? NOBOX : Z.box(this); }
+    contactOn() { return false; }                   // não machuca encostando: o único ataque é o hambúrguer
+    die() {
+      // fica caído um instante antes de sumir; solta os itens já
+      this.dying = true; this.dieT = 0; this.state = 'dying';
+      G().stats.kills++;
+      Z.emit(this.x, this.y - 30, 12, { color: this.colors, speed: 140, size: 2, life: 0.6 });
+      G().pickups.push(new Pickup(this.x, this.y - 27, 'carisma'));
+      if (Math.random() < 0.35) G().pickups.push(new Pickup(this.x, this.y - 27, 'heal'));
+    }
+    onHurt() { this.state = 'hurt'; this.st = 0.3; }
+    throwBurger() {
+      const p = G().player, f = this.facing;
+      const sx = this.x + f * 16, sy = this.y - 44;
+      const dx = p.x - sx;
+      if (Math.abs(dx) < 120) {
+        // de perto: arremesso reto na altura do peito (agache, pule ou role)
+        G().projectiles.push(new Burger(sx, sy, f * 235, 0, 0));
+      } else {
+        // de longe: arremesso em arco mirando onde o Zima está (saia do lugar!)
+        const g = 700, T = Z.clamp(Math.abs(dx) / 260, 0.55, 1.1);
+        const vx = dx / T, vy = (p.y - 14 - sy - 0.5 * g * T * T) / T;
+        G().projectiles.push(new Burger(sx, sy, vx, vy, g));
       }
+      Z.audio.play('throw');
     }
-    contactOn() { return this.state === 'dive'; }
-    onHurt() { if (this.state === 'dive' || this.state === 'alert') { this.state = 'return'; this.cd = 1.8; } }
-    draw(ctx, cam) {
-      const peckBob = this.state === 'peck' && Math.sin(this.t * 18) > 0 ? 2 : 0;
-      Z.art.pigeon(ctx, this.x - cam.x, this.y - cam.y + peckBob, this.facing, this.t, this.state === 'peck' ? 'dive' : this.state, this.flash > 0);
-      if (this.state === 'alert') Z.text(ctx, '!', this.x - cam.x, this.y - cam.y - 30, 14, '#ffe14d', 'center', '#3a1a10', Z.FONT2, 800);
-    }
-  }
-
-  // ---------------- Cabo Eleitoral do Coronel ----------------
-  class Cabo extends Enemy {
-    constructor(x, y) { super(x, y, 18, 48, 3); this.hx = x; this.state = 'walk'; this.cd = Z.rand(0.6, 1.2); this.dir = -1; this.colors = ['#c8323c', '#34508a', '#f4f1e6', '#ffd34d']; }
     update(dt) {
       this.common(dt);
+      if (this.dying) { this.dieT += dt; if (this.dieT > 1.7) { this.dead = true; Z.emit(this.x, this.y - 10, 8, { color: '#ffffff', speed: 50, gravity: -40, kind: 'shrink', size: 5, life: 0.4 }); } return; }
       const p = G().player, dx = p.x - this.x, L = G().level;
-      const aware = Math.abs(dx) < 290 && Math.abs(p.y - this.y) < 70 && p.state !== 'dead';
+      const aware = Math.abs(dx) < 300 && Math.abs(p.y - this.y) < 130 && p.state !== 'dead';
       let vx = 0;
       if (this.kb) { vx = this.kb; this.kb = Z.approach(this.kb, 0, 600 * dt); }
       this.cd -= dt;
@@ -94,36 +71,50 @@
         case 'walk':
           if (aware) {
             this.facing = Z.sign(dx);
-            // mantém distância
-            if (Math.abs(dx) < 90) vx += -this.facing * 35; else if (Math.abs(dx) > 200) vx += this.facing * 30;
+            if (Math.abs(dx) > 220) vx += this.facing * 34;          // aproxima-se até ter o Zima a tiro
             if (this.cd <= 0) { this.state = 'wind'; this.st = 0.5; Z.audio.play('alert'); }
           } else {
-            vx += this.dir * 28; this.facing = this.dir;
-            if (Math.abs(this.x - this.hx) > 50) this.dir = Z.sign(this.hx - this.x);
+            vx += this.dir * 30; this.facing = this.dir;
+            if (Math.abs(this.x - this.hx) > 56) this.dir = Z.sign(this.hx - this.x);
           }
           break;
         case 'wind':
           this.st -= dt; this.facing = Z.sign(dx);
-          if (this.st <= 0) {
-            G().projectiles.push(new Santinho(this.x + this.facing * 12, this.y - 44, this.facing * 175));
-            Z.audio.play('throw'); this.state = 'throw'; this.st = 0.3;
-          }
+          if (this.st <= 0) { this.throwBurger(); this.state = 'throw'; this.st = THROW_T; }
           break;
         case 'throw':
           this.st -= dt;
-          if (this.st <= 0) { this.state = 'walk'; this.cd = Z.rand(1.4, 2.1); }
+          if (this.st <= 0) { this.state = 'walk'; this.cd = Z.rand(1.5, 2.3); }
+          break;
+        case 'hurt':
+          this.st -= dt;
+          if (this.st <= 0) { this.state = 'walk'; this.cd = Math.max(this.cd, 0.7); }
           break;
       }
-      // não cai de beiradas
       const ahead = this.x + Z.sign(vx || 1) * 12;
-      if (vx && !L.solidAt(ahead, this.y + 4)) vx = 0;
+      if (vx && !L.solidAt(ahead, this.y + 4)) vx = 0;          // não cai de beiradas
       L.move(this, vx * dt, 0);
       this.walking = Math.abs(vx) > 5;
     }
-    onHurt() { if (this.state === 'wind') { this.state = 'walk'; this.cd = 0.9; } }
+    frame() {
+      switch (this.state) {
+        case 'dying': return Z.animFrame('atDie', this.dieT);
+        case 'hurt': return Z.animFrame('atHurt', 0);
+        case 'wind': return Z.animFrame('atWind', 0);
+        case 'throw': return Z.animProgress('atThrow', 1 - this.st / THROW_T);
+        default: return this.walking ? Z.animFrame('atWalk', this.t) : Z.animFrame('atIdle', 0);
+      }
+    }
     draw(ctx, cam) {
-      Z.art.cabo(ctx, this.x - cam.x, this.y - cam.y, this.facing, this.t, this.state, this.flash > 0, this.walking);
-      if (this.state === 'wind') Z.text(ctx, '!', this.x - cam.x, this.y - cam.y - 72, 14, '#ffe14d', 'center', '#3a1a10', Z.FONT2, 800);
+      if (this.dying && this.dieT > 1.15 && Math.floor(this.dieT * 14) % 2) return;
+      const x = this.x - cam.x, y = this.y - cam.y, f = this.frame();
+      Z.drawFrame(ctx, f, x, y, this.facing);
+      if (this.flash > 0) Z.drawFrame(ctx, f, x, y, this.facing, { white: true, alpha: 0.75 });
+      if (this.state === 'wind') {
+        Z.text(ctx, '!', x, y - 76, 14, '#ffe14d', 'center', '#3a1a10', Z.FONT2, 800);
+        // hambúrguer na mão, pronto para sair
+        Z.drawFrame(ctx, 'burger', x - this.facing * 10, y - 62 + Math.sin(this.t * 30) * 0.6, this.facing, { scale: 0.8 });
+      }
     }
   }
 
@@ -190,6 +181,21 @@
     }
   }
 
+  class Burger extends Santinho {
+    box() { return { l: this.x - 5.5, r: this.x + 5.5, t: this.y - 5, b: this.y + 5 }; }
+    destroy() {
+      this.dead = true; Z.audio.play('pop');
+      Z.emit(this.x, this.y, 12, { color: ['#d9993f', '#f0c070', '#5fae3a', '#d8302a', '#6a3a1c', '#ffd34d'], speed: 130, size: 2.2, life: 0.55 });
+    }
+    draw(ctx, cam) {
+      const x = this.x - cam.x, y = this.y - cam.y;
+      ctx.fillStyle = 'rgba(25,12,30,.18)'; ctx.beginPath(); ctx.ellipse(x, y + 6, 5, 1.2, 0, 0, 7); ctx.fill();
+      ctx.save(); ctx.translate(Z.snap(x), Z.snap(y)); ctx.rotate(this.t * 7 * Z.sign(this.vx || 1));
+      Z.drawFrame(ctx, 'burger', 0, 0, 1);
+      ctx.restore();
+    }
+  }
+
   class Wave {
     constructor(x, y, dir, speed = 235) { this.x = x; this.y = y; this.vx = dir * speed; this.t = 0; this.dead = false; this.enemy = true; this.w = 22; this.h = 22; }
     box() { return { l: this.x - this.w / 2, r: this.x + this.w / 2, t: this.y - this.h, b: this.y }; }
@@ -251,6 +257,6 @@
     }
   }
 
-  Z.Enemy = Enemy; Z.Pombo = Pombo; Z.Cabo = Cabo;
-  Z.Bubble = Bubble; Z.Santinho = Santinho; Z.Wave = Wave; Z.Pickup = Pickup;
+  Z.Enemy = Enemy; Z.Atendente = Atendente;
+  Z.Bubble = Bubble; Z.Santinho = Santinho; Z.Burger = Burger; Z.Wave = Wave; Z.Pickup = Pickup;
 })();

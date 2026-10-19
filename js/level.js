@@ -13,8 +13,8 @@
   const SIGNS = [
     { tx: 26, row: 14, text: '{MOVE} para andar e {JUMP} para pular. Segure o pulo para ir mais alto!' },
     { tx: 46, row: 17, text: 'Teto baixo! Segure {DOWN} para agachar e passar por baixo da marquise.' },
-    { tx: 79, row: 20, text: 'Pombos bravos! Ataque com {ATK} (dá para atacar no ar). Cada acerto enche seu CARISMA.' },
-    { tx: 113, row: 22, text: 'Os cabos do Coronel jogam santinhos na altura da cabeça. Agache ({DOWN}), pule ou role ({ROLL}).' },
+    { tx: 79, row: 20, text: 'Atendentes do Coronel arremessam hambúrgueres! Ataque com {ATK} (dá para atacar no ar). Cada acerto enche seu CARISMA. Dica: a rede também rebate o hambúrguer.' },
+    { tx: 113, row: 22, text: 'De perto o hambúrguer vem reto, na altura do peito: agache ({DOWN}), pule ou role ({ROLL}). De longe ele vem em arco: saia do lugar!' },
     { tx: 119, row: 22, text: 'Role no ÚLTIMO instante: se o golpe passar durante o giro, é ESQUIVA PERFEITA (ganha Carisma)!' },
     { tx: 176, row: 28, text: 'A ponte está erguida e o córrego é largo demais para pular. Acerte a alavanca com BOLHAS ({SPC}). Sem Carisma? Encoste na Urna.' },
     { tx: 203, row: 28, text: 'Um baú na sacada da Matriz! Suba pelos caixotes com {JUMP} e abra com a rede.' },
@@ -29,8 +29,8 @@
 
     ground(0, 40, 14);        // Rodoviária
     ground(40, 75, 17);       // Rua do Comércio
-    ground(75, 110, 20);      // Praça dos Pombos
-    ground(110, 160, 22);     // Rua dos Cabos + banco
+    ground(75, 110, 20);      // Praça do Coreto
+    ground(110, 160, 22);     // Avenida Central + banco
     ground(160, 185, 28);     // Córrego
     fill(185, 195, 31, ROWS, G); fill(185, 195, 29, 31, WATER);
     ground(195, COLS, 28);    // Igreja + Prefeitura
@@ -58,9 +58,9 @@
       chest: { x: 214 * T, y: 21 * T, open: !!save.chest, hits: 0 },
       lights: [[431.5, 14], [821.5, 17], [1193.5, 17], [1331.5, 20], [1651.5, 20], [2331.5, 22], [2421.5, 22], [3641.5, 28]].map(([x, r]) => ({ x, y: r * T - 59 })),
       enemies: [
-        { type: 'pombo', x: 86 * T, y: 15 * T }, { type: 'pombo', x: 97 * T, y: 14 * T }, { type: 'pombo', x: 105 * T, y: 15 * T },
-        { type: 'cabo', x: 127 * T, y: 22 * T }, { type: 'cabo', x: 139 * T, y: 22 * T },
-        { type: 'cabo', x: 222 * T, y: 28 * T }, { type: 'pombo', x: 226 * T, y: 22 * T },
+        { type: 'atendente', x: 89 * T, y: 20 * T }, { type: 'atendente', x: 103 * T, y: 20 * T },
+        { type: 'atendente', x: 127 * T, y: 22 * T }, { type: 'atendente', x: 140 * T, y: 22 * T },
+        { type: 'atendente', x: 176 * T, y: 28 * T }, { type: 'atendente', x: 222 * T, y: 28 * T },
       ],
       bossSpawn: { x: 272 * T, y: 28 * T },
     };
@@ -350,7 +350,7 @@
     D(980, 1200, () => { A.house(c, 985, gy(17), 200, 98, { wall: '#efcb4c', sign: 'MERCEARIA', signBg: '#8a3a2a', shutter: '#2f6f9a', windows: 4 }); A.lamp(c, 1192, gy(17)); });
     D(640, 1200, () => A.bunting(c, 640, 1200, gy(17) - 132, 16));
 
-    // --- Praça dos Pombos ---
+    // --- Praça do Coreto ---
     const pg = gy(20);
     D(1200, 1780, () => {
       A.ipe(c, 1250, pg, 1.3); A.ipe(c, 1720, pg, 1.2, '#f07ab0');
@@ -361,7 +361,7 @@
       A.bunting(c, 1390, 1570, pg - 124, 10);
     });
 
-    // --- Rua dos Cabos ---
+    // --- Avenida Central ---
     const cg = gy(22);
     D(1770, 2240, () => {
       A.house(c, 1775, cg, 140, 86, { wall: '#6cb3aa', sign: 'BAR DO ZÉ', signBg: '#6b3f28', shutter: '#f2e6c9', posters: [10, 112] });

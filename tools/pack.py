@@ -22,6 +22,14 @@ ANIMS = {
     'land':       (['crouch3'], 1, True),
     # NPC: Thyberius, o Mago (lendo o livro)
     'thyIdle':    (['thy%d' % i for i in range(8)], 6, True),
+    # Inimigo comum: Atendente (só arremessa hambúrguer)
+    'atIdle':     (['atw0'], 1, True),
+    'atWalk':     (['atw%d' % i for i in range(1, 8)], 10, True),
+    'atWind':     (['ata1'], 1, True),
+    'atThrow':    (['ata2', 'ata3', 'ata4', 'ata5'], 12, False),
+    'atHurt':     (['atd2'], 1, True),
+    'atDie':      (['atd2', 'atd3', 'atd4', 'atd6'], 8, False),
+    'burger':     (['burger'], 1, True),
 }
 EXTRA = ['special8', 'special13']   # efeitos de bolha
 
