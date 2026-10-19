@@ -327,7 +327,7 @@
       { label: () => 'Imagem', act: () => openOptions() },
     ] };
     g.titleCam = { x: 0, y: 0 };
-    Z.audio.music('town');
+    Z.audio.music('menu');
     I.clear();
   }
   function updateTitle(dt) {
@@ -523,12 +523,16 @@
     Z.drawParticles(ctx, { x: 0, y: 0 });
     const bob = Math.sin(g.t * 2) * 2;
     ctx.save(); ctx.shadowColor = 'rgba(10,20,60,.6)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 4;
-    ctx.font = `400 40px ${Z.FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-    ctx.lineWidth = 7; ctx.lineJoin = 'round'; ctx.strokeStyle = '#141032'; ctx.strokeText('ZIMA', Z.W / 2, 26 + bob);
-    ctx.fillStyle = Z.art.lin(ctx, 0, 26, 0, 66, [[0, '#d8f6ff'], [0.5, '#7fd6ff'], [1, '#2f7fd0']]); ctx.fillText('ZIMA', Z.W / 2, 26 + bob);
+    ctx.font = `400 42px ${Z.FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.lineWidth = 7; ctx.lineJoin = 'round'; ctx.strokeStyle = '#141032'; ctx.strokeText('ZIMA', Z.W / 2, 44 + bob);
+    ctx.fillStyle = Z.art.lin(ctx, 0, 44, 0, 86, [[0, '#d8f6ff'], [0.5, '#7fd6ff'], [1, '#2f7fd0']]); ctx.fillText('ZIMA', Z.W / 2, 44 + bob);
     ctx.restore();
-    Z.text(ctx, 'BLUE ADVENTURE', Z.W / 2, 74 + bob, 15, '#fff6dc', 'center', '#141032');
-    Z.text(ctx, 'Rumo à Presidência', Z.W / 2, 96, 15, '#ffd6a0', 'center', '#3a1a20', Z.FONT2, 800);
+    Z.text(ctx, 'O CONTO DE', Z.W / 2, 22 + bob, 14, '#fff6dc', 'center', '#141032');
+    // faixinhas decorativas ao lado do "O CONTO DE"
+    ctx.font = `400 14px ${Z.FONT}`;
+    const hw = ctx.measureText('O CONTO DE').width / 2 + 10;
+    ctx.fillStyle = '#e9c46a'; ctx.fillRect(Z.W / 2 - hw - 36, 29 + bob, 36, 1.5); ctx.fillRect(Z.W / 2 + hw, 29 + bob, 36, 1.5);
+    Z.text(ctx, 'Rumo à Presidência', Z.W / 2, 96, 18, '#ffd6a0', 'center', '#3a1a20', Z.FONT2, 800);
     Z.drawFrame(ctx, Z.animFrame('idle', g.t), 92, 312, 1, { scale: 2.2 });
     if (Math.random() < 0.06) Z.emit(Z.rand(0, Z.W), Z.H + 5, 1, { color: '#d8f2ff', kind: 'bub', speed: 30, angle: -Math.PI / 2, spread: 0.3, gravity: -20, life: 4, size: 5 });
     if (g.state !== 'title') return;          // nas opções, o menu é desenhado por cima

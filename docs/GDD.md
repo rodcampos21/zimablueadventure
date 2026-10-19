@@ -1,4 +1,4 @@
-# Zima Blue Adventure — Documento de Design (v0.1, Tutorial)
+# O Conto de Zima: Rumo à Presidência — Documento de Design (v0.1, Tutorial)
 
 > Zima sai do interior rumo à Presidência. Primeiro passo: Capitão Leônidas Marques.
 >

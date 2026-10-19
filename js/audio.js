@@ -115,10 +115,48 @@
     s.connect(f); f.connect(g); g.connect(musicBus); s.start(t0); s.stop(t0 + 0.05);
   }
 
+  // ---------- músicas em arquivo (ex.: tema do menu) ----------
+  const TRACKS = Object.assign({ menu: 'assets/audio/menu.mp3' }, window.ZIMA_TRACKS || {});
+  const TRACK_VOL = 0.6;
+  const players = {};
+  let fileTrack = null, unlocked = false;
+  function trackEl(name) {
+    if (!players[name]) { const a = new Audio(TRACKS[name]); a.loop = true; a.preload = 'auto'; a.volume = 0; players[name] = a; }
+    return players[name];
+  }
+  function fade(a, to, ms, done) {
+    clearInterval(a._fade);
+    const from = a.volume, t0 = performance.now();
+    a._fade = setInterval(() => {
+      const k = Math.min(1, (performance.now() - t0) / ms);
+      a.volume = Math.max(0, Math.min(1, from + (to - from) * k));
+      if (k >= 1) { clearInterval(a._fade); done && done(); }
+    }, 30);
+  }
+  function startFileTrack() {
+    if (!fileTrack || !unlocked) return;
+    const a = trackEl(fileTrack);
+    const p = a.play(); if (p && p.catch) p.catch(() => {});
+    fade(a, muted ? 0 : TRACK_VOL, 600);
+  }
+  function stopFileTracks(except) {
+    for (const [n, a] of Object.entries(players)) if (n !== except && !a.paused) fade(a, 0, 500, () => { a.pause(); a.currentTime = 0; });
+  }
+
   Z.audio = {
-    init() { init(); if (ctx && ctx.state === 'suspended') ctx.resume(); if (!timer) timer = setInterval(schedule, 50); },
+    init() {
+      init(); if (ctx && ctx.state === 'suspended') ctx.resume(); if (!timer) timer = setInterval(schedule, 50);
+      if (!unlocked) { unlocked = true; startFileTrack(); }
+    },
     play(name) { try { SFX[name] && SFX[name](); } catch (_) {} },
     music(name) {
+      if (TRACKS[name]) {                       // trilha gravada: para o sintetizador e toca o arquivo em loop
+        song = null;
+        if (fileTrack === name) return;
+        fileTrack = name; stopFileTracks(name); startFileTrack();
+        return;
+      }
+      if (fileTrack) { stopFileTracks(); fileTrack = null; }
       if (song === name) return;
       song = name; step = 0; if (ctx) nextTime = ctx.currentTime + 0.1;
     },
@@ -127,6 +165,7 @@
       muted = !muted;
       try { localStorage.setItem('zima_mute', muted ? '1' : '0'); } catch (_) {}
       if (master) master.gain.value = muted ? 0 : 0.8;
+      if (fileTrack && players[fileTrack]) fade(players[fileTrack], muted ? 0 : TRACK_VOL, 200);
       const b = document.getElementById('btnSound'); if (b) b.classList.toggle('off', muted);
     },
   };

@@ -1,6 +1,6 @@
-# Zima Blue Adventure 🫧
+# O Conto de Zima: Rumo à Presidência 🫧
 
-**A Aventura de Zima — Rumo à Presidência.** Um metroidvania em pixel art que roda no navegador e no celular.
+Um metroidvania em pixel art que roda no navegador e no celular.
 Zima desce do ônibus em Capitão Leônidas Marques e encontra **Thyberius, o Mago**, que lhe dá a missão principal: **recrutar aliados e chegar à Prefeitura**, onde o Coronel Bigodão governa desde 1985. É o primeiro passo da campanha que termina em Brasília.
 
 Esta versão é o **Tutorial**: atravessa a cidadezinha e termina na luta contra o primeiro chefe.

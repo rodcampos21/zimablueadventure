@@ -1,6 +1,6 @@
 {
-  "name": "Zima Blue Adventure",
-  "short_name": "Zima",
+  "name": "O Conto de Zima: Rumo à Presidência",
+  "short_name": "Conto de Zima",
   "start_url": "./index.html",
   "display": "fullscreen",
   "orientation": "landscape",

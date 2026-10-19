@@ -20,6 +20,9 @@ def inline(m):
     return f'<script>\n{js}\n</script>'
 
 html = re.sub(r'<script src="([^"]+)"></script>', inline, html)
+# trilhas de música embutidas (o arquivo único não depende da pasta assets/)
+mp3 = base64.b64encode(open(os.path.join(ROOT, 'assets/audio/menu.mp3'), 'rb').read()).decode()
+html = html.replace('<script>\n// Gerado por tools/pack.py', f'<script>window.ZIMA_TRACKS = {{ menu: "data:audio/mpeg;base64,{mp3}" }};</script>\n<script>\n// Gerado por tools/pack.py', 1)
 os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)
 out = os.path.join(ROOT, 'dist/zima.html')
 open(out, 'w', encoding='utf-8').write(html)
