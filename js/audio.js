@@ -116,7 +116,7 @@
   }
 
   // ---------- músicas em arquivo (ex.: tema do menu) ----------
-  const TRACKS = Object.assign({ menu: 'assets/audio/menu.mp3' }, window.ZIMA_TRACKS || {});
+  const TRACKS = Object.assign({ menu: 'assets/audio/menu.mp3', boss: 'assets/audio/chefe.mp3' }, window.ZIMA_TRACKS || {});
   const TRACK_VOL = 0.6;
   const players = {};
   let fileTrack = null, unlocked = false;

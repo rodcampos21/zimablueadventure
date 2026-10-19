@@ -3,7 +3,7 @@
 Um metroidvania em pixel art que roda no navegador e no celular.
 Zima desce do ônibus em Capitão Leônidas Marques e encontra **Thyberius, o Mago**, que lhe dá a missão principal: **recrutar aliados e chegar à Prefeitura**, onde o Coronel Bigodão governa desde 1985. É o primeiro passo da campanha que termina em Brasília.
 
-Esta versão é o **Tutorial**: atravessa a cidadezinha e termina na luta contra o primeiro chefe.
+Esta versão é a **Demo**: atravessa a cidade e termina na luta contra **Julius, o Comuculturista**, que depois de apanhar vira o primeiro aliado do Zima.
 
 ## Como jogar
 - **Navegador:** abra `index.html` (funciona até com dois cliques, sem servidor) ou o arquivo único `dist/zima.html`.
@@ -28,8 +28,8 @@ Esta versão é o **Tutorial**: atravessa a cidadezinha e termina na luta contra
 - Ampliar usa vizinho mais próximo (`imageSmoothingEnabled = false` + `image-rendering: pixelated`, o equivalente web do `RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR` do Java); reduzir usa filtro de alta qualidade, para não serrilhar.
 - Menu **Imagem** (no título e na pausa): Brilho, Contraste e Qualidade (Alta/Média/Leve).
 
-## O que tem no tutorial
-Rodoviária (primeiro pulo, por cima das malas) → Rua do Comércio (marquise baixa) → Praça do Coreto → Avenida Central (Atendentes que arremessam hambúrguer) → Banco da Praça (checkpoint) → um segredo escondido → Córrego Manso (ponte e alavanca) → Largo da Matriz (suba pelos caixotes até a sacada: o baú dá +1 de Carisma máximo) → **Chefe: Coronel Bigodão**, com duas fases.
+## O que tem na demo
+Rodoviária (primeiro pulo, por cima das malas) → Rua do Comércio (marquise baixa) → Praça do Coreto → Avenida Central (Atendentes que arremessam hambúrguer) → Banco da Praça (checkpoint) → um segredo escondido → Córrego Manso (ponte e alavanca) → Largo da Matriz (suba pelos caixotes até a sacada: o baú dá +1 de Carisma máximo) → **Chefe: Julius, o Comuculturista** (soco, investida e arremesso de pedra, duas fases, com música própria) → Julius se levanta e entra para a campanha → Fim da demo.
 
 O design se baseia numa análise de Super Metroid, Castlevania: Symphony of the Night, Hollow Knight, Ori and the Will of the Wisps e Metroid Dread. Veja [`docs/GDD.md`](docs/GDD.md).
 
@@ -44,11 +44,12 @@ js/art.js             cenário e personagens em pixel art procedural
 js/level.js           mapa de Capitão Leônidas Marques, colisão, objetos
 js/player.js          o Zima
 js/enemies.js         Atendente (inimigo comum), hambúrguer, projéteis do chefe, itens
-js/boss.js            Coronel Bigodão
+js/boss.js            Julius, o Comuculturista (chefe)
 js/game.js            laço principal, HUD, diálogos, menus, salvamento
 js/atlas.js           (gerado) quadros do Zima
 assets/zima.png       (gerado) atlas dos sprites do Zima
-raw/                  folhas de sprite originais (Zima, Thyberius e Atendente)
+raw/                  folhas de sprite originais (Zima, Thyberius, Atendente e Julius)
+assets/audio/         música do menu (menu.mp3) e da luta contra o chefe (chefe.mp3)
 tools/                scripts Python para recortar sprites e gerar o arquivo único
 ```
 
@@ -59,7 +60,7 @@ pip install pillow numpy scipy
 python3 tools/pack.py     # recorta, remove o fundo e gera assets/zima.png + js/atlas.js
 python3 tools/build.py    # gera dist/zima.html
 ```
-As animações usadas (quais quadros, velocidade) ficam no topo de `tools/pack.py`. NPCs em folhas com molduras (como o Thyberius) são recortados por `tools/npc.py`.
+As animações usadas (quais quadros, velocidade) ficam no topo de `tools/pack.py`. NPCs e inimigos em folhas com células são recortados por `tools/npc.py`; o Julius (figuras que atravessam as linhas da grade) por `tools/julius.py`.
 
 ## Depuração
 Abra com `?debug` no endereço (ou aperte F2) para ver as caixas de colisão.

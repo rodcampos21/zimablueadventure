@@ -4,6 +4,7 @@ from PIL import Image
 from scipy import ndimage as ndi
 sys.path.insert(0, os.path.dirname(__file__))
 from extract import cut_frame, OUT_SCALE, ROOT
+from julius import run_julius
 
 def cut_cell(full, box, scale, pick='largest'):
     """Recorta um elemento dentro de uma célula. pick='largest' pega o maior;
@@ -58,6 +59,7 @@ def run_npcs():
     frames = {}
     frames.update(thyberius())
     frames.update(atendente())
+    frames.update(run_julius())
     return frames
 
 if __name__ == '__main__':

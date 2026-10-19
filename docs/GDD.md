@@ -46,15 +46,16 @@ Fluxo da esquerda para a direita, sempre descendo (sem pulo, só se cai de degra
 6. **Muro rachado** — segredo com a Coxinha (+1 vida).
 7. **Córrego** — ponte levadiça erguida; a alavanca está do outro lado → Bolhas.
 8. **Sacada da igreja** — subir pelos caixotes e abrir o baú com a rede: Medalha do Avô (+1 de Carisma máximo).
-9. **Chefe: Coronel Bigodão, o Prefeito Eterno** — em frente à Prefeitura.
+9. **Chefe: Julius, o Comuculturista** — segurança entediado da porta da Prefeitura (o Coronel Bigodão continua como prefeito, nos bastidores).
 
-### Chefe — Coronel Bigodão (24 de vida)
-- **Investida do Palanque**: bate o pé (poeira) e atravessa a arena → rolar através dele.
-- **Chuva de Santinhos**: arremessa 3 a 5 panfletos na altura da cabeça → agachar ou rolar.
-- **Discurso no Megafone**: onda sonora rente ao chão → só rolando no tempo certo.
-- **Fase 2 (≤ 50%)**: fica mais rápido, encadeia golpes e chama dois Atendentes.
-
-Vitória → tela "Fim do Tutorial" com tempo, mortes e esquivas perfeitas.
+### Chefe — Julius, o Comuculturista (26 de vida)
+"Divido tudo com o povo... menos o meu whey." Está entediado há três anos e quer um oponente à altura.
+- **Soco** (de perto): arma o braço (flexão) e soca na altura do peito → agachar passa por baixo; rolar também funciona.
+- **Investida**: bate o pé, brilha em vermelho e atravessa a arena; o corpo machuca → rolar através dele (esquiva perfeita!) ou pular no último instante. Se bater na parede fica zonzo: hora de atacar.
+- **Arremesso de pedra**: pega uma pedra do chão, ergue e arremessa em arco mirando o Zima → sair do lugar. A pedra é pesada: não dá para rebater.
+- **Fase 2 (≤ 50%)**: "Agora é treino de verdade!" Mais rápido, soco duplo, duas pedras seguidas que se partem em lascas ao cair, e a pancada na parede derruba pedrinhas do alto.
+- **Derrota**: tomba, fica zonzo, levanta e se junta à campanha (primeiro aliado). Em seguida, tela "Fim da Demo".
+- Música própria da luta (`assets/audio/chefe.mp3`).
 
 ## 4. Tecnologia
 - HTML5 Canvas + JavaScript puro, sem dependências; abre direto no navegador (inclusive por `file://`).

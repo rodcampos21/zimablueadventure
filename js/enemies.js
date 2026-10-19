@@ -1,4 +1,4 @@
-// Inimigos: Atendente (arremessa hambúrguer); projéteis (bolhas, hambúrguer, santinhos e onda sonora do chefe) e itens.
+// Inimigos: Atendente (arremessa hambúrguer); projéteis (bolhas, hambúrguer, pedra do Julius) e itens.
 'use strict';
 (() => {
   const G = () => Z.game;
@@ -196,25 +196,33 @@
     }
   }
 
-  class Wave {
-    constructor(x, y, dir, speed = 235) { this.x = x; this.y = y; this.vx = dir * speed; this.t = 0; this.dead = false; this.enemy = true; this.w = 22; this.h = 22; }
-    box() { return { l: this.x - this.w / 2, r: this.x + this.w / 2, t: this.y - this.h, b: this.y }; }
-    update(dt) {
-      const g = G(); this.t += dt; this.x += this.vx * dt;
-      if (Math.random() < 0.6) Z.emit(this.x, this.y - 2, 1, { color: '#e8d8a8', speed: 40, gravity: -30, life: 0.3, size: 2 });
-      if (g.level.solidAt(this.x + Z.sign(this.vx) * 12, this.y - 8) || this.t > 4) { this.dead = true; return; }
-      if (Z.overlap(this.box(), Z.box(g.player))) g.player.hurt(1, this.x);
+  // pedra arremessada pelo Julius (pesada: não dá para rebater). Na fase 2 se parte em lascas.
+  class Rock {
+    constructor(x, y, vx, vy, grav, scale = 1, shatter = false) {
+      this.x = x; this.y = y; this.vx = vx; this.vy = vy; this.grav = grav; this.s = scale; this.shatter = shatter;
+      this.t = 0; this.dead = false; this.enemy = true; this.breakable = false; this.spin = Z.rand(4, 7) * Z.sign(vx || 1);
     }
+    box() { const r = 7 * this.s; return { l: this.x - r, r: this.x + r, t: this.y - r, b: this.y + r }; }
+    smash(onGround) {
+      this.dead = true;
+      Z.emit(this.x, this.y, Math.round(14 * this.s), { color: ['#8a8178', '#6b625a', '#bdb3a6', '#d8c8a8'], speed: 150, size: 2.5 * this.s + 0.8, life: 0.6 });
+      if (this.s >= 1) { Z.audio.play('break'); Z.cam.shake(3, 0.2); } else Z.audio.play('land');
+      if (onGround && this.shatter) for (const dir of [-1, 1, Z.rand(-0.3, 0.3)])
+        G().projectiles.push(new Rock(this.x, this.y - 6, dir * Z.rand(90, 170), -Z.rand(200, 260), 900, 0.45));
+    }
+    update(dt) {
+      const g = G(); this.t += dt;
+      this.vy += this.grav * dt; this.x += this.vx * dt; this.y += this.vy * dt;
+      if (this.t > 4 || this.y > g.level.ph) { this.dead = true; return; }
+      if (g.level.solidAt(this.x, this.y + 6 * this.s)) { this.y = Math.floor((this.y + 6 * this.s) / Z.T) * Z.T - 6 * this.s; this.smash(true); return; }
+      if (Z.overlap(this.box(), Z.box(g.player)) && g.player.hurt(1, this.x) === 'hit') this.smash(false);
+    }
+    destroy() { this.smash(false); }
     draw(ctx, cam) {
-      const x = this.x - cam.x, y = this.y - cam.y, d = Z.sign(this.vx);
-      ctx.save(); ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = Z.art.rad(ctx, x, y - 10, 1, 22, [[0, 'rgba(255,220,140,.45)'], [1, 'rgba(255,200,120,0)']]); ctx.fillRect(x - 24, y - 34, 48, 34);
+      const x = this.x - cam.x, y = this.y - cam.y;
+      ctx.save(); ctx.translate(Z.snap(x), Z.snap(y)); ctx.rotate(this.t * this.spin);
+      Z.drawFrame(ctx, 'rock', 0, 0, 1, { scale: this.s });
       ctx.restore();
-      for (let i = 0; i < 3; i++) {
-        ctx.strokeStyle = i === 0 ? '#fff6c8' : i === 1 ? 'rgba(255,214,120,.8)' : 'rgba(255,170,90,.5)';
-        ctx.lineWidth = 2.2 - i * 0.5;
-        ctx.beginPath(); ctx.arc(x - d * (i * 7), y - 2, 12 + (this.t * 8 % 3), d > 0 ? -1.3 : Math.PI - 0.27, d > 0 ? 0.27 : Math.PI + 1.3); ctx.stroke();
-      }
     }
   }
 
@@ -258,5 +266,5 @@
   }
 
   Z.Enemy = Enemy; Z.Atendente = Atendente;
-  Z.Bubble = Bubble; Z.Santinho = Santinho; Z.Burger = Burger; Z.Wave = Wave; Z.Pickup = Pickup;
+  Z.Bubble = Bubble; Z.Santinho = Santinho; Z.Burger = Burger; Z.Rock = Rock; Z.Pickup = Pickup;
 })();

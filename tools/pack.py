@@ -30,6 +30,21 @@ ANIMS = {
     'atHurt':     (['atd2'], 1, True),
     'atDie':      (['atd2', 'atd3', 'atd4', 'atd6'], 8, False),
     'burger':     (['burger'], 1, True),
+    # Chefe: Julius, o Comuculturista
+    'jIdle':      (['ji%d' % i for i in range(12)], 7, True),
+    'jWalk':      (['jw%d' % i for i in range(12)], 11, True),
+    'jDashTele':  (['jd0'], 1, True),
+    'jDash':      (['jd1', 'jd2', 'jd3'], 12, True),
+    'jDashEnd':   (['jd5', 'jd4'], 8, False),
+    'jPunchWind': (['jp1'], 1, True),
+    'jPunch':     (['jp2'], 1, True),
+    'jPunchEnd':  (['jp3', 'jp6'], 8, False),
+    'jJab':       (['jp0'], 1, True),
+    'jFlex':      (['jp1'], 1, True),
+    'jRockPick':  (['jr3', 'jr2', 'jr1', 'jr4'], 6, False),
+    'jRockLift':  (['jr5', 'jr6'], 6, False),
+    'jRockThrow': (['jr7'], 1, True),
+    'rock':       (['rock'], 1, True),
 }
 EXTRA = ['special8', 'special13']   # efeitos de bolha
 

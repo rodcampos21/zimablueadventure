@@ -18,7 +18,7 @@
     { tx: 119, row: 22, text: 'Role no ÚLTIMO instante: se o golpe passar durante o giro, é ESQUIVA PERFEITA (ganha Carisma)!' },
     { tx: 176, row: 28, text: 'A ponte está erguida e o córrego é largo demais para pular. Acerte a alavanca com BOLHAS ({SPC}). Sem Carisma? Encoste na Urna.' },
     { tx: 203, row: 28, text: 'Um baú na sacada da Matriz! Suba pelos caixotes com {JUMP} e abra com a rede.' },
-    { tx: 235, row: 28, text: 'Prefeitura de Capitão Leônidas Marques. O Coronel Bigodão te espera. Role ou pule a investida dele!' },
+    { tx: 235, row: 28, text: 'Prefeitura de Capitão Leônidas Marques. Um brutamontes guarda a porta! Agache sob o soco, role através da investida e saia de baixo da pedra.' },
   ];
 
   Z.makeLevel = save => {
