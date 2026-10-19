@@ -35,7 +35,7 @@
     try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s && s.cp) return s; } catch (_) {}
     return null;
   }
-  function freshSave() { return { cp: 'start', coxinha: false, wall: false, bridge: false, chest: false, intro: false }; }
+  function freshSave() { return { cp: 'start', coxinha: false, wall: false, bridge: false, chest: false, mission: false }; }
   g.writeSave = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(g.save)); } catch (_) {} };
   g.saveFlag = (k, v) => { g.save[k] = v; g.writeSave(); };
 
@@ -78,14 +78,15 @@
     buildWorld(s);
     g.state = 'play'; g.fade = 1;
     Z.audio.music('town');
-    if (!s.intro) {
-      g.save.intro = true; g.writeSave();
+    if (!s.mission) {
+      g.save.mission = true; g.writeSave();
       g.openDialog([
-        { who: 'Dona Cida', text: 'Zima, meu filho! Que bom que você voltou pra Vila Azul.' },
-        { who: 'Dona Cida', text: 'O Coronel Bigodão manda nessa prefeitura desde 1985. Ninguém tem coragem de concorrer com ele...' },
-        { who: 'Zima', text: 'Pois eu tenho, Dona Cida. Começa aqui, na minha cidade. Depois: a Presidência!' },
-        { who: 'Dona Cida', text: 'Então leva essa rede de bolhas do seu avô. E cuidado com os pombos da praça!' },
-      ]);
+        { who: 'Thyberius', text: 'Ah, Zima! As estrelas me avisaram que você desceria deste ônibus hoje.' },
+        { who: 'Thyberius', text: 'Sou Thyberius, o Mago. Há décadas o Coronel Bigodão enfeitiça esta cidade com santinhos e promessas vazias.' },
+        { who: 'Zima', text: 'Vim mudar isso. Meu sonho é a Presidência... mas por onde eu começo?' },
+        { who: 'Thyberius', text: 'Pelo começo, meu jovem. Sua missão: RECRUTAR ALIADOS e chegar à Prefeitura de Capitão Leônidas Marques.' },
+        { who: 'Thyberius', text: 'Encantei sua rede: agora ela sopra bolhas de carisma. Vá! E cuidado com os pombos da praça.' },
+      ], () => { g.hud.msg = { title: 'NOVA MISSÃO', text: 'Recrutar aliados e chegar à Prefeitura de Capitão Leônidas Marques.', t: 0 }; Z.audio.play('chest'); });
     }
   }
 
@@ -102,13 +103,14 @@
       else d.chars = 0;
     }
   }
-  const SPEAKER = { 'Zima': '#3a74b0', 'Dona Cida': '#7a5aae', 'Coronel Bigodão': '#a8323a' };
+  const SPEAKER = { 'Zima': '#3a74b0', 'Thyberius': '#3b3f9a', 'Coronel Bigodão': '#a8323a' };
+  const MISSION = 'Recrutar aliados e chegar à Prefeitura de Capitão Leônidas Marques';
   function drawPortrait(who, x, y, s) {
     ctx.save();
     ctx.beginPath(); ctx.arc(x + s / 2, y + s / 2, s / 2, 0, 7); ctx.clip();
     ctx.fillStyle = Z.art.lin(ctx, 0, y, 0, y + s, [[0, '#ffe2b0'], [1, '#e7a07a']]); ctx.fillRect(x, y, s, s);
     if (who === 'Zima') Z.drawPortrait(ctx, x + s * 0.04, y + s * 0.06, s * 0.98);
-    else if (who === 'Dona Cida') Z.art.cida(ctx, x + s / 2 + 1, y + s * 1.84, g.t, s / 26);
+    else if (who === 'Thyberius') Z.drawPortrait(ctx, x + s * 0.06, y + s * 0.1, s * 0.92, 'thy0', 0.22, 0.56, true);
     else Z.art.boss(ctx, x + s / 2 - 2, y + s * 2.32, 1, g.t, 'idle', false, false, s / 44);
     ctx.restore();
     ctx.lineWidth = 2; ctx.strokeStyle = SPEAKER[who] || '#e9c46a'; ctx.beginPath(); ctx.arc(x + s / 2, y + s / 2, s / 2, 0, 7); ctx.stroke();
@@ -158,7 +160,7 @@
     Z.audio.music(null);
     setTimeout(() => {
       g.openDialog([
-        { who: 'Coronel Bigodão', text: 'Ora, ora... o tal do Zima. Quarenta anos que essa cidade vota em mim, rapaz!' },
+        { who: 'Coronel Bigodão', text: 'Ora, ora... o tal do Zima. Quarenta anos que Capitão Leônidas Marques vota em mim, rapaz!' },
         { who: 'Zima', text: 'O povo merece escolha, Coronel. Vim pra um debate.' },
         { who: 'Coronel Bigodão', text: 'Debate? Aqui o debate é no grito! SEGURANÇAS, SANTINHOS, MEGAFONE!' },
       ], () => { g.boss.start(); Z.audio.music('boss'); });
@@ -171,7 +173,7 @@
     g.openDialog([
       { who: 'Coronel Bigodão', text: 'Impossível... quarenta anos... derrotado por... BOLHAS?!' },
       { who: 'Zima', text: 'Não foram as bolhas, Coronel. Foi o povo querendo mudança.' },
-      { who: 'Dona Cida', text: 'ZIMA PREFEITO! E depois... quem sabe Brasília!' },
+      { who: 'Thyberius', text: 'A primeira prefeitura é sua, Zima! Agora siga recrutando aliados... o caminho até Brasília é longo.' },
     ], () => {
       g.state = 'victory'; g.victoryT = 0; Z.audio.music('victory');
       try { localStorage.removeItem(SAVE_KEY); localStorage.setItem('zima_cleared', '1'); } catch (_) {}
@@ -359,7 +361,7 @@
     A.lever(ctx, L.lever.x - cam.x, L.lever.y - cam.y, L.lever.on);
     A.chest(ctx, L.chest.x - cam.x, L.chest.y - cam.y, g.t, L.chest.open);
     if (L.coxinha) A.coxinha(ctx, L.coxinha.x - cam.x, L.coxinha.y - cam.y, g.t);
-    A.cida(ctx, L.npc.x - cam.x, L.npc.y - cam.y, g.t);
+    drawWizard(L.npc, cam);
     for (const pk of g.pickups) pk.draw(ctx, cam);
     for (const e of g.enemies) if (!e.dead || e === g.boss) {
       // sombra dos inimigos que andam no chão
@@ -380,6 +382,29 @@
     if (g.hud.perfectFlash > 0) { ctx.fillStyle = `rgba(140,210,255,${g.hud.perfectFlash * 0.45})`; ctx.fillRect(0, 0, Z.W, Z.H); }
     if (g.slow > 0) { ctx.strokeStyle = 'rgba(160,220,255,.5)'; ctx.lineWidth = 5; ctx.strokeRect(2.5, 2.5, Z.W - 5, Z.H - 5); }
   }
+  // Thyberius, o Mago: vira para o Zima, com brilho mágico no livro
+  function drawWizard(n, cam) {
+    const x = n.x - cam.x, y = n.y - cam.y, p = g.player;
+    const facing = p.x < n.x ? -1 : 1;
+    ctx.fillStyle = 'rgba(25,12,30,.3)'; ctx.beginPath(); ctx.ellipse(x, y - 0.5, 15, 2.6, 0, 0, 7); ctx.fill();
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    const k = 0.75 + Math.sin(g.t * 2.4) * 0.25;
+    ctx.fillStyle = Z.art.rad(ctx, x + facing * 12, y - 38, 1, 26 * k, [[0, 'rgba(160,190,255,.55)'], [0.4, 'rgba(120,140,255,.18)'], [1, 'rgba(120,140,255,0)']]);
+    ctx.fillRect(x + facing * 12 - 30, y - 68, 60, 60);
+    ctx.restore();
+    Z.drawFrame(ctx, Z.animFrame('thyIdle', g.t), x, y, facing);
+    if (Math.random() < 0.08) Z.emit(n.x + facing * Z.rand(6, 20), n.y - Z.rand(34, 44), 1, { color: ['#bfd4ff', '#ffe68a', '#ffffff'], speed: 18, gravity: -30, life: 1.2, size: 1.3, glow: true });
+    // balão quando o Zima chega perto (depois da conversa)
+    if (!g.dialog && g.save.mission && Math.abs(p.x - n.x) < 70 && Math.abs(p.y - n.y) < 30) {
+      const txt = 'Recrute aliados, Zima! A Prefeitura fica a leste.';
+      ctx.font = `700 11px ${Z.FONT2}`;
+      const w = ctx.measureText(txt).width + 16, bx = x - w / 2, by = y - 92;
+      Z.art.rr(ctx, bx, by, w, 18, 8); ctx.fillStyle = 'rgba(255,250,238,.96)'; ctx.fill(); ctx.lineWidth = 1; ctx.strokeStyle = '#3b3f9a'; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,250,238,.96)'; ctx.beginPath(); ctx.moveTo(x - 4, by + 17.5); ctx.lineTo(x + 4, by + 17.5); ctx.lineTo(x, by + 23); ctx.fill();
+      Z.text(ctx, txt, x, by + 3, 11, '#2a2350', 'center', null, Z.FONT2, 700);
+    }
+  }
+
   // gradação de cor: luz dourada no alto, sombra fria embaixo e vinheta
   function grade() {
     ctx.fillStyle = Z.art.lin(ctx, 0, 0, 0, Z.H, [[0, 'rgba(255,190,120,.10)'], [0.45, 'rgba(255,190,120,0)'], [0.8, 'rgba(40,20,80,0)'], [1, 'rgba(40,20,80,.16)']]);
@@ -431,6 +456,11 @@
     drawPortrait('Zima', 12, 12, 36);
     for (let i = 0; i < p.maxHp; i++) heart(58 + i * 15, 22, Z.clamp(p.hp - i, 0, 1));
     for (let i = 0; i < p.maxCar; i++) bubbleIcon(58 + i * 17, 40, Z.clamp(p.carisma - i, 0, 1), g.hud.flashCarisma > 0 && Math.floor(g.t * 16) % 2);
+    // missão principal
+    if (g.save.mission && !g.dialog) {
+      Z.text(ctx, '★ Missão', 12, 58, 10.5, '#ffe68a', 'left', '#1d1430', Z.FONT2, 800);
+      Z.text(ctx, MISSION, 12, 70, 10.5, '#f6f1e6', 'left', '#1d1430', Z.FONT2, 700);
+    }
     // chefe
     const b = g.boss;
     if (b && g.bossStarted && !b.dead && b.state !== 'intro') {
@@ -445,7 +475,7 @@
     const s = nearSign();
     if (s && !g.dialog) {
       const lines = Z.wrap(ctx, signText(s.text), 372, 13, Z.FONT2, 700);
-      const h = lines.length * 16 + 16, w = 396, x = (Z.W - w) / 2, y = 58;
+      const h = lines.length * 16 + 16, w = 396, x = (Z.W - w) / 2, y = 90;
       panel(x, y, w, h, 'wood');
       lines.forEach((l, i) => Z.text(ctx, l, Z.W / 2, y + 8 + i * 16, 13, '#fff3d6', 'center', null, Z.FONT2, 700));
     }
@@ -463,9 +493,10 @@
     if (m) {
       const a = Z.clamp(Math.min(m.t / 0.3, (3.4 - m.t) / 0.5), 0, 1);
       ctx.globalAlpha = a;
-      panel(Z.W / 2 - 180, 118, 360, 58);
-      Z.text(ctx, m.title, Z.W / 2, 130, 11, '#ffe68a', 'center', null);
-      Z.text(ctx, m.text, Z.W / 2, 151, 13, '#fff', 'center', null, Z.FONT2, 700);
+      const ml = Z.wrap(ctx, m.text, 340, 13, Z.FONT2, 700);
+      panel(Z.W / 2 - 185, 112, 370, 44 + ml.length * 16);
+      Z.text(ctx, m.title, Z.W / 2, 124, 11, '#ffe68a', 'center', null);
+      ml.forEach((l, i) => Z.text(ctx, l, Z.W / 2, 145 + i * 16, 13, '#fff', 'center', null, Z.FONT2, 700));
       ctx.globalAlpha = 1;
     }
   }
@@ -515,7 +546,7 @@
     Z.drawParticles(ctx, g.camView);
     if (g.victoryT < 0.6) return;
     Z.text(ctx, 'FIM DO TUTORIAL', Z.W / 2, 44, 20, '#ffe68a', 'center', '#2a1430');
-    Z.text(ctx, 'Zima venceu o debate na Vila Azul!', Z.W / 2, 78, 15, '#fff', 'center', null, Z.FONT2, 700);
+    Z.text(ctx, 'Zima venceu o debate em Capitão Leônidas Marques!', Z.W / 2, 78, 15, '#fff', 'center', null, Z.FONT2, 700);
     const st = g.stats, mm = Math.floor(st.time / 60), ss = Math.floor(st.time % 60);
     const rows = [['Tempo', `${mm}:${String(ss).padStart(2, '0')}`], ['Derrotas', st.deaths], ['Esquivas perfeitas', st.perfects], ['Adversários vencidos', st.kills],
       ['Segredos', `${(g.save.coxinha ? 1 : 0) + (g.save.chest ? 1 : 0)}/2`]];
@@ -524,7 +555,7 @@
       Z.text(ctx, k, 186, 114 + i * 22, 13, '#cfc6e6', 'left', null, Z.FONT2, 600);
       Z.text(ctx, String(v), 454, 114 + i * 22, 13, '#fff', 'right', null, Z.FONT2, 800);
     });
-    Z.text(ctx, 'Próximo capítulo: a Campanha Estadual!', Z.W / 2, 256, 13, '#9fe0ff', 'center', null, Z.FONT2, 700);
+    Z.text(ctx, 'Missão continua: recrutar aliados pela região!', Z.W / 2, 256, 13, '#9fe0ff', 'center', null, Z.FONT2, 700);
     if (g.victoryT > 1.5 && Math.floor(g.t * 2) % 2) Z.text(ctx, I.mode === 'touch' ? 'Toque para continuar' : 'Enter para continuar', Z.W / 2, 296, 13, '#fff', 'center', null, Z.FONT2, 700);
   }
 
@@ -561,6 +592,7 @@
       if (g.state === 'pause') {
         const tips = [`${I.label('move')} andar · ${I.label('jump')} pular · ${I.label('down')} agachar`, `${I.label('attack')} rede · ${I.label('roll')} rolar · ${I.label('special')} bolhas`];
         tips.forEach((t, i) => Z.text(ctx, t, Z.W / 2, 268 + i * 18, 13, '#cfc6e6', 'center', null, Z.FONT2, 700));
+        Z.text(ctx, '★ ' + MISSION, Z.W / 2, 318, 12, '#ffe68a', 'center', null, Z.FONT2, 800);
       } else Z.text(ctx, '◀ ▶ ajustam o valor', Z.W / 2, 268, 12, '#cfc6e6', 'center', null, Z.FONT2, 700);
     }
   }

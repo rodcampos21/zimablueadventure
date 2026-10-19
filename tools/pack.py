@@ -3,6 +3,7 @@ import os, sys, json
 from PIL import Image
 sys.path.insert(0, os.path.dirname(__file__))
 from extract import run, ROOT, OUT_SCALE
+from npc import run_npcs
 
 ANIMS = {
     'idle':       (['idle_walk%d' % i for i in range(8)], 7, True),
@@ -19,11 +20,14 @@ ANIMS = {
     'apex':       (['run4'], 1, True),
     'fall':       (['attack10'], 1, True),
     'land':       (['crouch3'], 1, True),
+    # NPC: Thyberius, o Mago (lendo o livro)
+    'thyIdle':    (['thy%d' % i for i in range(8)], 6, True),
 }
 EXTRA = ['special8', 'special13']   # efeitos de bolha
 
 def main():
     frames = run()
+    frames.update(run_npcs())
     used = []
     for fr, _, _ in ANIMS.values():
         for f in fr:

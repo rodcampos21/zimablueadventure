@@ -1,7 +1,7 @@
 # Zima Blue Adventure 🫧
 
 **A Aventura de Zima — Rumo à Presidência.** Um metroidvania em pixel art que roda no navegador e no celular.
-Zima volta para a Vila Azul do Interior para enfrentar o Coronel Bigodão, prefeito desde 1985. É o primeiro passo da campanha que termina em Brasília.
+Zima desce do ônibus em Capitão Leônidas Marques e encontra **Thyberius, o Mago**, que lhe dá a missão principal: **recrutar aliados e chegar à Prefeitura**, onde o Coronel Bigodão governa desde 1985. É o primeiro passo da campanha que termina em Brasília.
 
 Esta versão é o **Tutorial**: atravessa a cidadezinha e termina na luta contra o primeiro chefe.
 
@@ -41,14 +41,14 @@ js/core.js            utilitários, partículas, câmera
 js/input.js           teclado, toque multitoque, gamepad
 js/audio.js           efeitos e músicas sintetizados (Web Audio)
 js/art.js             cenário e personagens em pixel art procedural
-js/level.js           mapa da Vila Azul, colisão, objetos
+js/level.js           mapa de Capitão Leônidas Marques, colisão, objetos
 js/player.js          o Zima
 js/enemies.js         pombos, cabos eleitorais, projéteis, itens
 js/boss.js            Coronel Bigodão
 js/game.js            laço principal, HUD, diálogos, menus, salvamento
 js/atlas.js           (gerado) quadros do Zima
 assets/zima.png       (gerado) atlas dos sprites do Zima
-raw/                  folhas de sprite originais
+raw/                  folhas de sprite originais (Zima e Thyberius)
 tools/                scripts Python para recortar sprites e gerar o arquivo único
 ```
 
@@ -59,7 +59,7 @@ pip install pillow numpy scipy
 python3 tools/pack.py     # recorta, remove o fundo e gera assets/zima.png + js/atlas.js
 python3 tools/build.py    # gera dist/zima.html
 ```
-As animações usadas (quais quadros, velocidade) ficam no topo de `tools/pack.py`.
+As animações usadas (quais quadros, velocidade) ficam no topo de `tools/pack.py`. NPCs em folhas com molduras (como o Thyberius) são recortados por `tools/npc.py`.
 
 ## Depuração
 Abra com `?debug` no endereço (ou aperte F2) para ver as caixas de colisão.

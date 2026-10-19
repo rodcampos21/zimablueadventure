@@ -47,12 +47,13 @@
     return a.frames[i];
   };
   Z.animProgress = (anim, p) => { const a = atlas.anims[anim]; return a.frames[Math.min(a.frames.length - 1, Math.floor(p * a.frames.length))]; };
-  // recorte da cabeça do Zima para retratos de diálogo
-  Z.drawPortrait = (ctx, x, y, size) => {
-    const [sx, sy, w] = atlas.frames.idle_walk0;
-    const cut = Math.round(w * 0.62);
+  // recorte da cabeça de um quadro para retratos de diálogo (fx = início horizontal, fw = largura do recorte)
+  Z.drawPortrait = (ctx, x, y, size, name = 'idle_walk0', fx = 0.16, fw = 0.62, flip = false) => {
+    const [sx, sy, w] = atlas.frames[name];
+    const cut = Math.round(w * fw);
     ctx.save(); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(img, sx + Math.round(w * 0.16), sy, cut, cut, x, y, size, size);
+    if (flip) { ctx.translate(x + size, y); ctx.scale(-1, 1); x = 0; y = 0; }
+    ctx.drawImage(img, sx + Math.round(w * fx), sy, cut, cut, x, y, size, size);
     ctx.restore();
   };
 

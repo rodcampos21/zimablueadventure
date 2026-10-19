@@ -360,33 +360,6 @@
     c.restore();
   };
 
-  // Dona Cida (NPC)
-  A.cida = (c, x, y, t, scale = 1) => {
-    c.save(); c.translate(x, y); c.scale(scale, scale);
-    const b = Math.sin(t * 2) * 0.5;
-    // vassoura
-    c.strokeStyle = '#8a6438'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(9, -34); c.lineTo(11, -4); c.stroke();
-    c.beginPath(); c.moveTo(7, -5); c.lineTo(15, -5); c.lineTo(17, 0); c.lineTo(5, 0); c.closePath(); fs(c, '#d9be6e', 0.7);
-    for (let i = 6; i < 16; i += 2) R(c, i, -4, 0.5, 4, '#b39a4e');
-    // vestido
-    c.beginPath(); c.moveTo(-6, -27); c.lineTo(6, -27); c.lineTo(9, -1); c.lineTo(-9, -1); c.closePath();
-    c.fillStyle = lin(c, 0, -27, 0, 0, [[0, '#8a6cc0'], [1, '#5f4a92']]); c.fill(); c.lineWidth = 0.9; c.strokeStyle = OUT; c.stroke();
-    const fl = ['#f6c1d9', '#fff3a8', '#ffffff'];
-    for (let i = 0; i < 14; i++) { c.fillStyle = fl[i % 3]; ell(c, -6 + ((i * 37) % 13), -24 + ((i * 11) % 21), 0.9, 0.9); c.fill(); }
-    rr(c, -5, -18, 10, 14, 1.5); fs(c, '#f4f1e6', 0.6);                               // avental
-    rr(c, -7, -2, 6, 2.5, 1); fs(c, '#4a3030', 0.6); rr(c, 1, -2, 6, 2.5, 1); fs(c, '#4a3030', 0.6);
-    // braços
-    rr(c, 5, -25, 4, 11, 2); fs(c, '#d9a27a', 0.7); rr(c, -9, -25, 4, 11, 2); fs(c, '#c99270', 0.7);
-    // cabeça
-    ell(c, 0, -34 + b, 7, 7); c.fillStyle = rad(c, -2, -37, 1, 9, [[0, '#ebb892'], [1, '#c99270']]); c.fill(); c.lineWidth = 0.9; c.strokeStyle = OUT; c.stroke();
-    ell(c, -1, -40 + b, 7.5, 3.6); fs(c, '#dadae4', 0.8); ell(c, -5, -42 + b, 3.4, 3.2); fs(c, '#e6e6ee', 0.8); // coque
-    ell(c, 3.2, -34 + b, 2.4, 2); c.lineWidth = 0.7; c.strokeStyle = '#4a3a5a'; c.stroke(); R(c, -0.6, -34.2 + b, 1.6, 0.6, '#4a3a5a');
-    ell(c, 3.2, -34 + b, 0.8, 0.8); c.fillStyle = '#22161a'; c.fill();
-    c.strokeStyle = '#a0504a'; c.lineWidth = 0.7; c.beginPath(); c.moveTo(1.5, -30 + b); c.quadraticCurveTo(3.5, -28.8 + b, 5.5, -30 + b); c.stroke();
-    ell(c, 5, -31.5 + b, 1.4, 0.9); c.fillStyle = 'rgba(230,110,110,.35)'; c.fill();
-    c.restore();
-  };
-
   // Coronel Bigodão (origem: centro dos pés)
   A.boss = (c, x, y, facing, t, pose, flash, phase2, scale = 1) => {
     c.save(); c.translate(x, y); c.scale(facing * scale, scale);

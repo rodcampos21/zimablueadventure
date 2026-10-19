@@ -1,6 +1,8 @@
 # Zima Blue Adventure — Documento de Design (v0.1, Tutorial)
 
-> Zima sai do interior rumo à Presidência. Primeiro passo: vencer a eleição da própria cidadezinha.
+> Zima sai do interior rumo à Presidência. Primeiro passo: Capitão Leônidas Marques.
+>
+> **Missão principal** (dada por Thyberius, o Mago): recrutar aliados e chegar à Prefeitura de Capitão Leônidas Marques.
 
 ## 1. Análise dos 5 metroidvanias de referência
 
@@ -32,11 +34,11 @@
 
 O pulo alcança degraus de até 4 tiles. O desnível de 6 tiles do Córrego e o portão da arena continuam fora de alcance de propósito (espaço para habilidades futuras, como pulo duplo).
 
-## 3. O tutorial: "Vila Azul do Interior"
+## 3. O tutorial: Capitão Leônidas Marques
 
 Fluxo da esquerda para a direita, sempre descendo (sem pulo, só se cai de degraus):
 
-1. **Rodoviária** — Zima desce do ônibus. Placa: andar.
+1. **Rodoviária** — Zima desce do ônibus e conhece **Thyberius, o Mago**, que dá a missão principal e encanta a rede de bolhas. Placa: andar e pular (malas no caminho).
 2. **Rua do Comércio** — toldo da padaria baixo demais → agachar.
 3. **Praça dos Pombos** — pombos atacam em rasante → ataque básico.
 4. **Cabo eleitoral rival** — joga santinhos na altura da cabeça → agachar ou rolar. Placa explica a janela perfeita.

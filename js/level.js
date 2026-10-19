@@ -1,4 +1,4 @@
-// Fase tutorial: "Vila Azul do Interior". Mapa de tiles, objetos, colisão e pintura do cenário em HD.
+// Fase tutorial: Capitão Leônidas Marques. Mapa de tiles, objetos, colisão e pintura do cenário em HD.
 // O cenário estático é pintado em blocos (chunks) na resolução real da tela e guardado em cache.
 'use strict';
 (() => {
@@ -18,7 +18,7 @@
     { tx: 119, row: 22, text: 'Role no ÚLTIMO instante: se o golpe passar durante o giro, é ESQUIVA PERFEITA (ganha Carisma)!' },
     { tx: 176, row: 28, text: 'A ponte está erguida e o córrego é largo demais para pular. Acerte a alavanca com BOLHAS ({SPC}). Sem Carisma? Encoste na Urna.' },
     { tx: 203, row: 28, text: 'Um baú na sacada da Matriz! Suba pelos caixotes com {JUMP} e abra com a rede.' },
-    { tx: 235, row: 28, text: 'Prefeitura Municipal. O Coronel Bigodão te espera. Role ou pule a investida dele!' },
+    { tx: 235, row: 28, text: 'Prefeitura de Capitão Leônidas Marques. O Coronel Bigodão te espera. Role ou pule a investida dele!' },
   ];
 
   Z.makeLevel = save => {
@@ -336,7 +336,7 @@
       c.beginPath(); c.moveTo(300, gy(14) - 106); c.lineTo(300, gy(14) - 111); c.moveTo(300, gy(14) - 106); c.lineTo(303.5, gy(14) - 105); c.stroke();
     });
     D(420, 640, () => { A.lamp(c, 430, gy(14)); A.ipe(c, 480, gy(14), 1.1); A.house(c, 520, gy(14), 112, 72, { wall: '#d4708f', windows: 2, shutter: '#f2e6c9', trim: '#fff1f6' }); });
-    D(10, 190, () => bus(c, 20, gy(14)));
+    D(10, 190, () => { welcome(c, 96, gy(14)); bus(c, 20, gy(14)); });
 
     // --- Rua do Comércio ---
     D(640, 830, () => { A.house(c, 650, gy(17), 160, 92, { wall: '#86c17f', sign: 'FARMÁCIA', signBg: '#1f6a3a', shutter: '#f5f0e0', trim: '#f7ffef' }); A.lamp(c, 820, gy(17)); });
@@ -394,9 +394,20 @@
     D(3600, 3760, () => { A.lamp(c, 3640, rg); A.ipe(c, 3690, rg, 1.2); });
 
     // --- Prefeitura ---
-    D(3860, 4544, () => { prefeitura(c, 3880, rg); A.bunting(c, 3870, 4500, rg - 196, 20); });
+    D(3860, 4544, () => { prefeitura(c, 3880, rg); A.bunting(c, 3870, 4500, rg - 142, 10); });
   }
 
+  // placa de boas-vindas da cidade
+  function welcome(c, cx, by) {
+    const A = Z.art, R = A.R;
+    for (const px of [cx - 70, cx + 66]) { c.fillStyle = A.lin(c, px, 0, px + 4, 0, [[0, '#8a8a96'], [1, '#55555f']]); c.fillRect(px, by - 112, 4, 112); }
+    A.rr(c, cx - 78, by - 132, 156, 36, 4); c.fillStyle = A.lin(c, 0, by - 132, 0, by - 96, [[0, '#2f8f4e'], [1, '#1d6a36']]); c.fill();
+    c.lineWidth = 1.4; c.strokeStyle = '#f6f1e6'; A.rr(c, cx - 75, by - 129, 150, 30, 3); c.stroke();
+    c.textAlign = 'center'; c.textBaseline = 'top'; c.fillStyle = '#fff';
+    c.font = `400 6px ${Z.FONT}`; c.fillText('BEM-VINDO A', cx, by - 125);
+    c.font = `400 7px ${Z.FONT}`; c.fillText('CAPITÃO LEÔNIDAS', cx, by - 116.5);
+    c.fillText('MARQUES', cx, by - 107.5);
+  }
   function bus(c, bx, by) {
     const A = Z.art, R = A.R;
     A.rr(c, bx, by - 60, 152, 50, 5); c.fillStyle = A.lin(c, 0, by - 60, 0, by - 10, [[0, '#f6f1e2'], [1, '#cfc6ae']]); c.fill(); c.lineWidth = 1; c.strokeStyle = '#2a2a36'; c.stroke();
@@ -480,8 +491,9 @@
     R(c, x + 148, by - 200, 324, 3, '#fffaf0'); R(c, x + 148, by - 197, 324, 1, '#c9b88f');
     c.fillStyle = '#fff'; c.beginPath(); c.arc(x + 310, by - 214, 8, 0, 7); c.fill(); c.lineWidth = 1; c.strokeStyle = '#9a3f2a'; c.stroke();
     c.font = `400 8px ${Z.FONT}`; c.fillStyle = '#6b3f28'; c.textAlign = 'center'; c.textBaseline = 'top';
-    c.fillText('PREFEITURA MUNICIPAL', x + 310, by - 184);
-    c.font = `400 6px ${Z.FONT}`; c.fillStyle = '#9a3f2a'; c.fillText('ADM. CORONEL BIGODÃO (DESDE 1985)', x + 310, by - 166);
+    c.fillText('PREFEITURA MUNICIPAL', x + 310, by - 188);
+    c.font = `400 6.5px ${Z.FONT}`; c.fillStyle = '#2e5d8a'; c.fillText('CAPITÃO LEÔNIDAS MARQUES', x + 310, by - 175);
+    c.font = `400 5px ${Z.FONT}`; c.fillStyle = '#9a3f2a'; c.fillText('ADM. CORONEL BIGODÃO (DESDE 1985)', x + 310, by - 162);
     // escadaria
     for (let k = 0; k < 3; k++) R(c, x + 230 - k * 8, by - 4 - k * 0, 160 + k * 16, 0, '#ccc');
     // mastro e bandeira
