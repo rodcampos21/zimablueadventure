@@ -106,13 +106,35 @@
   }
   const SPEAKER = { 'Zima': '#3a74b0', 'Thyberius': '#3b3f9a', 'Julius': '#b8282f' };
   const MISSION = 'Recrutar aliados e chegar à Prefeitura de Capitão Leônidas Marques';
+  // ---------- retratos (arte dos personagens) ----------
+  const PORTRAIT_FILES = Object.assign({
+    Zima: ['assets/portraits/zima_card.png', 'assets/portraits/zima_face.png'],
+    Julius: ['assets/portraits/julius_card.png', 'assets/portraits/julius_face.png'],
+    Thyberius: ['assets/portraits/thyberius_card.png', 'assets/portraits/thyberius_face.png'],
+  }, window.ZIMA_PORTRAITS || {});
+  const PORTRAITS = {};
+  function loadPortraits() {
+    const jobs = [];
+    for (const [who, [card, face]] of Object.entries(PORTRAIT_FILES)) {
+      PORTRAITS[who] = { card: new Image(), face: new Image() };
+      for (const [k, src] of [['card', card], ['face', face]]) {
+        const im = PORTRAITS[who][k];
+        jobs.push(new Promise(r => { im.onload = im.onerror = r; }));
+        im.src = src;
+      }
+    }
+    return Promise.race([Promise.all(jobs), new Promise(r => setTimeout(r, 4000))]);
+  }
+  const ready = im => im && im.complete && im.naturalWidth > 0;
+  // rosto redondo (HUD)
   function drawPortrait(who, x, y, s) {
     ctx.save();
     ctx.beginPath(); ctx.arc(x + s / 2, y + s / 2, s / 2, 0, 7); ctx.clip();
     ctx.fillStyle = Z.art.lin(ctx, 0, y, 0, y + s, [[0, '#ffe2b0'], [1, '#e7a07a']]); ctx.fillRect(x, y, s, s);
-    if (who === 'Zima') Z.drawPortrait(ctx, x + s * 0.04, y + s * 0.06, s * 0.98);
-    else if (who === 'Thyberius') Z.drawPortrait(ctx, x + s * 0.06, y + s * 0.1, s * 0.92, 'thy0', 0.22, 0.56, true);
-    else if (who === 'Julius') Z.drawPortrait(ctx, x + s * 0.04, y + s * 0.08, s * 0.94, 'ji0', 0.25, 0.58);
+    const P = PORTRAITS[who];
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    if (P && ready(P.face)) ctx.drawImage(P.face, x, y, s, s);
+    else if (who === 'Zima') Z.drawPortrait(ctx, x + s * 0.04, y + s * 0.06, s * 0.98);
     ctx.restore();
     ctx.lineWidth = 2; ctx.strokeStyle = SPEAKER[who] || '#e9c46a'; ctx.beginPath(); ctx.arc(x + s / 2, y + s / 2, s / 2, 0, 7); ctx.stroke();
     ctx.lineWidth = 0.8; ctx.strokeStyle = '#fff6dc'; ctx.beginPath(); ctx.arc(x + s / 2, y + s / 2, s / 2 + 1.6, 0, 7); ctx.stroke();
@@ -127,19 +149,39 @@
     Z.art.rr(ctx, x + 0.5, y + 0.5, w - 1, h - 1, 6.5); ctx.lineWidth = 1; ctx.strokeStyle = tone === 'wood' ? '#d8b27a' : 'rgba(233,196,106,.85)'; ctx.stroke();
     Z.art.rr(ctx, x + 3, y + 3, w - 6, h - 6, 4.5); ctx.lineWidth = 0.5; ctx.strokeStyle = 'rgba(255,255,255,.14)'; ctx.stroke();
   }
+  // cartão com o retrato de quem fala: Zima à esquerda, os outros à direita (estilo visual novel)
+  function drawCard(who, cx, by, size, k) {
+    const P = PORTRAITS[who];
+    if (!P || !ready(P.card)) return false;
+    const s = size * (0.86 + 0.14 * k), bob = Math.sin(g.t * 2.2) * 1.2;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, k * 1.6);
+    ctx.shadowColor = 'rgba(10,5,20,.6)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 4;
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(P.card, cx - s / 2, by - s + bob, s, s);
+    ctx.restore();
+    return true;
+  }
   function drawDialog() {
     const d = g.dialog, line = d.lines[d.i];
-    const x = 34, y = Z.H - 104, w = Z.W - 68, h = 88;
+    if (d.who !== line.who) { d.who = line.who; d.pop = 0; }
+    d.pop = Math.min(1, (d.pop || 0) + 1 / 60 / 0.16);
+    const k = 1 - Math.pow(1 - d.pop, 3);
+    const left = line.who === 'Zima';
+    const C = 118;                                            // tamanho do cartão
+    const x = 26, y = Z.H - 98, w = Z.W - 52, h = 86;
     panel(x, y, w, h);
-    drawPortrait(line.who, x + 10, y + 12, 62);
+    const hasCard = drawCard(line.who, left ? x + 14 + C / 2 : x + w - 14 - C / 2, y + h - 6, C, k);
+    if (!hasCard) drawPortrait(line.who, left ? x + 10 : x + w - 72, y + 12, 62);
+    const tx = left ? x + C + 26 : x + 16, tw = w - C - 44;
     ctx.font = `800 12px ${Z.FONT2}`;
     const nw = ctx.measureText(line.who).width + 18;
-    Z.art.rr(ctx, x + 84, y - 9, nw, 18, 9); ctx.fillStyle = SPEAKER[line.who] || '#6b4f8a'; ctx.fill();
+    Z.art.rr(ctx, tx - 2, y - 9, nw, 18, 9); ctx.fillStyle = SPEAKER[line.who] || '#6b4f8a'; ctx.fill();
     ctx.lineWidth = 1; ctx.strokeStyle = '#fff6dc'; ctx.stroke();
-    Z.text(ctx, line.who, x + 93, y - 6.5, 12, '#fff', 'left', null, Z.FONT2, 800);
-    const lines = Z.wrap(ctx, line.text.slice(0, Math.floor(d.chars)), w - 104, 13.5, Z.FONT2, 600);
-    lines.forEach((l, i) => Z.text(ctx, l, x + 86, y + 16 + i * 17, 13.5, '#f6f1e6', 'left', null, Z.FONT2, 600));
-    if (d.chars >= line.text.length) Z.text(ctx, '▼', x + w - 16, y + h - 18 + Math.sin(g.t * 6) * 1.5, 10, '#e9c46a', 'left', null, Z.FONT2, 800);
+    Z.text(ctx, line.who, tx + 7, y - 6.5, 12, '#fff', 'left', null, Z.FONT2, 800);
+    const lines = Z.wrap(ctx, line.text.slice(0, Math.floor(d.chars)), tw, 13.5, Z.FONT2, 600);
+    lines.forEach((l, i) => Z.text(ctx, l, tx, y + 14 + i * 17, 13.5, '#f6f1e6', 'left', null, Z.FONT2, 600));
+    if (d.chars >= line.text.length) Z.text(ctx, '▼', left ? x + w - 16 : tx + tw - 4, y + h - 18 + Math.sin(g.t * 6) * 1.5, 10, '#e9c46a', 'left', null, Z.FONT2, 800);
   }
 
   // ---------------- morte, chefe, vitória ----------------
@@ -677,7 +719,7 @@
   async function boot() {
     requestAnimationFrame(frame);
     try { await Promise.race([Promise.all([document.fonts.load(`400 8px ${Z.FONT}`), document.fonts.load(`700 12px ${Z.FONT2}`), document.fonts.load(`800 12px ${Z.FONT2}`)]), new Promise(r => setTimeout(r, 2500))]); } catch (_) {}
-    await Z.loadAtlas();
+    await Promise.all([Z.loadAtlas(), loadPortraits()]);
     g.layersReady = true; g.layers = Z.art.buildLayers(chunkRes());
     applySettings();
     I.onFirstGesture = () => Z.audio.init();

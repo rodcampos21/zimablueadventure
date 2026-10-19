@@ -49,7 +49,8 @@ js/game.js            laço principal, HUD, diálogos, menus, salvamento
 js/atlas.js           (gerado) quadros do Zima
 assets/zima.png       (gerado) atlas dos sprites do Zima
 raw/                  folhas de sprite originais (Zima, Thyberius, Atendente e Julius)
-assets/audio/         música do menu (menu.mp3) e da luta contra o chefe (chefe.mp3)
+assets/audio/         músicas: menu (menu.mp3), exploração da fase (exploracao.mp3) e chefe (chefe.mp3)
+assets/portraits/     retratos dos diálogos e do HUD (gerados por tools/portraits.py a partir de raw/portraits/)
 tools/                scripts Python para recortar sprites e gerar o arquivo único
 ```
 

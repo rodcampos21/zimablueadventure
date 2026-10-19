@@ -22,8 +22,11 @@ def inline(m):
 html = re.sub(r'<script src="([^"]+)"></script>', inline, html)
 # trilhas de música embutidas (o arquivo único não depende da pasta assets/)
 b64 = lambda p: base64.b64encode(open(os.path.join(ROOT, p), 'rb').read()).decode()
-tracks = '{ menu: "data:audio/mpeg;base64,%s", boss: "data:audio/mpeg;base64,%s" }' % (b64('assets/audio/menu.mp3'), b64('assets/audio/chefe.mp3'))
-html = html.replace('<script>\n// Gerado por tools/pack.py', f'<script>window.ZIMA_TRACKS = {tracks};</script>\n<script>\n// Gerado por tools/pack.py', 1)
+tracks = '{ menu: "data:audio/mpeg;base64,%s", town: "data:audio/mpeg;base64,%s", boss: "data:audio/mpeg;base64,%s" }' % (
+    b64('assets/audio/menu.mp3'), b64('assets/audio/exploracao.mp3'), b64('assets/audio/chefe.mp3'))
+png64 = lambda n: 'data:image/png;base64,' + b64(f'assets/portraits/{n}.png')
+portraits = '{ %s }' % ', '.join(f'{who}: ["{png64(n + "_card")}", "{png64(n + "_face")}"]' for who, n in [('Zima', 'zima'), ('Julius', 'julius'), ('Thyberius', 'thyberius')])
+html = html.replace('<script>\n// Gerado por tools/pack.py', f'<script>window.ZIMA_TRACKS = {tracks}; window.ZIMA_PORTRAITS = {portraits};</script>\n<script>\n// Gerado por tools/pack.py', 1)
 os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)
 out = os.path.join(ROOT, 'dist/zima.html')
 open(out, 'w', encoding='utf-8').write(html)
